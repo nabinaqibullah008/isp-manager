@@ -1,0 +1,2127 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ISP Manager v4 — سیستم مدیریت</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap');
+:root{
+  --primary:#4f6ef7;--primary-dark:#3451d1;--secondary:#7c3aed;--accent:#06b6d4;
+  --success:#10b981;--warning:#f59e0b;--danger:#ef4444;
+  --bg-dark:#0a0f1e;--bg-card:rgba(255,255,255,0.04);--bg-card-hover:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.08);--text-primary:#f1f5f9;--text-secondary:#94a3b8;--text-muted:#64748b;
+  --sidebar-w:268px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Vazirmatn',sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 20% -10%,rgba(79,110,247,.15) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(124,58,237,.12) 0%,transparent 60%);pointer-events:none;z-index:0;}
+
+/* LOGIN */
+#loginPage{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;background:var(--bg-dark);}
+#loginPage::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 20% -10%,rgba(79,110,247,.2) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(124,58,237,.15) 0%,transparent 60%);pointer-events:none;}
+.login-box{background:rgba(15,23,42,0.9);border:1px solid var(--border);border-radius:24px;padding:44px 40px;width:100%;max-width:420px;position:relative;z-index:1;backdrop-filter:blur(20px);box-shadow:0 24px 80px rgba(0,0,0,.5);}
+.login-logo{text-align:center;margin-bottom:32px;}
+.login-logo .icon{width:64px;height:64px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:20px;display:inline-flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:14px;box-shadow:0 8px 32px rgba(79,110,247,.5);}
+.login-logo h1{font-size:22px;font-weight:800;}.login-logo p{font-size:13px;color:var(--text-muted);margin-top:4px;}
+.login-field{margin-bottom:18px;}.login-field label{display:block;font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;}
+.login-input{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:12px;padding:12px 16px;color:var(--text-primary);font-family:'Vazirmatn',sans-serif;font-size:14px;outline:none;transition:all .2s;}
+.login-input:focus{border-color:rgba(79,110,247,.5);background:rgba(79,110,247,.05);box-shadow:0 0 0 3px rgba(79,110,247,.1);}
+.login-btn{width:100%;background:linear-gradient(135deg,var(--primary),var(--primary-dark));border:none;border-radius:12px;padding:13px;color:white;font-family:'Vazirmatn',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(79,110,247,.4);margin-top:8px;}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 8px 30px rgba(79,110,247,.5);}
+.login-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#f87171;border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:16px;display:none;align-items:center;gap:8px;}
+.login-info{background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.2);color:#22d3ee;border-radius:10px;padding:10px 14px;font-size:12px;margin-bottom:14px;display:none;}
+.pwd-wrapper{position:relative;}.pwd-toggle{position:absolute;left:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:15px;padding:0;}
+
+/* SIDEBAR */
+.sidebar{position:fixed;top:0;right:0;width:var(--sidebar-w);height:100vh;background:rgba(10,15,30,.97);backdrop-filter:blur(20px);border-left:1px solid var(--border);z-index:1000;display:flex;flex-direction:column;transition:transform .3s ease;overflow-y:auto;}
+.sidebar-brand{padding:20px;border-bottom:1px solid var(--border);}
+.brand-logo{display:flex;align-items:center;gap:12px;}
+.brand-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 4px 20px rgba(79,110,247,.4);}
+.brand-text .name{font-size:13px;font-weight:700;}.brand-text .sub{font-size:9px;color:var(--text-muted);letter-spacing:.5px;}
+.sidebar-nav{padding:12px 10px;flex:1;}
+.nav-lbl{font-size:9px;font-weight:700;color:var(--text-muted);letter-spacing:1.2px;padding:10px 8px 4px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:10px;cursor:pointer;margin-bottom:2px;transition:all .2s;font-size:13px;color:var(--text-secondary);position:relative;}
+.nav-item:hover{background:var(--bg-card-hover);color:var(--text-primary);}
+.nav-item.active{background:linear-gradient(135deg,rgba(79,110,247,.2),rgba(124,58,237,.1));color:var(--primary);border:1px solid rgba(79,110,247,.2);}
+.nav-icon{width:16px;text-align:center;font-size:13px;}
+.nav-badge{margin-right:auto;background:var(--danger);color:white;font-size:9px;padding:2px 6px;border-radius:20px;font-weight:600;}
+.nav-item.danger-item{color:#f87171;}.nav-item.danger-item:hover{background:rgba(239,68,68,.1);color:#ef4444;}
+.admin-only{display:none;}
+.sidebar-footer{padding:14px;border-top:1px solid var(--border);}
+.user-info{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:var(--bg-card);}
+.user-avatar{width:34px;height:34px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.user-details .uname{font-size:12px;font-weight:600;}.user-details .urole{font-size:10px;color:var(--text-muted);}
+
+/* MAIN */
+.main-content{margin-right:var(--sidebar-w);min-height:100vh;position:relative;z-index:1;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(10,15,30,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-size:17px;font-weight:700;}.topbar-subtitle{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.topbar-actions{display:flex;align-items:center;gap:8px;}
+.btn-icon{width:36px;height:36px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--text-secondary);font-size:14px;}
+.btn-icon:hover{background:var(--bg-card-hover);color:var(--text-primary);}
+.page-content{padding:24px;display:none;}.page-content.active{display:block;}
+
+/* STATS */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:20px;}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px;position:relative;overflow:hidden;transition:all .3s;backdrop-filter:blur(10px);}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--card-color,var(--primary));}
+.stat-card:hover{border-color:rgba(255,255,255,.15);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3);}
+.stat-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:12px;}
+.stat-value{font-size:24px;font-weight:800;line-height:1;margin-bottom:4px;}.stat-label{font-size:11px;color:var(--text-muted);}
+
+/* GLASS CARD */
+.glass-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;backdrop-filter:blur(10px);overflow:hidden;margin-bottom:18px;}
+.card-header-custom{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-header-custom .title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.card-header-custom .title .icon{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.card-body-custom{padding:20px;}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px;}
+.data-table thead th{background:rgba(255,255,255,.03);padding:10px 12px;font-weight:600;font-size:11px;color:var(--text-muted);border-bottom:1px solid var(--border);white-space:nowrap;}
+.data-table tbody td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text-secondary);vertical-align:middle;}
+.data-table tbody tr:hover td{background:rgba(255,255,255,.03);color:var(--text-primary);}
+.data-table tbody tr:last-child td{border-bottom:none;}
+
+/* BADGE */
+.badge-custom{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:600;}
+.badge-primary{background:rgba(79,110,247,.15);color:#818cf8;border:1px solid rgba(79,110,247,.2);}
+.badge-success{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.2);}
+.badge-warning{background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.2);}
+.badge-danger{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.badge-purple{background:rgba(124,58,237,.15);color:#a78bfa;border:1px solid rgba(124,58,237,.2);}
+.badge-cyan{background:rgba(6,182,212,.15);color:#22d3ee;border:1px solid rgba(6,182,212,.2);}
+
+/* FORM */
+.form-label-custom{font-size:11.5px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;display:block;}
+.form-control-custom{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:9px 12px;color:var(--text-primary);font-family:'Vazirmatn',sans-serif;font-size:13px;transition:all .2s;outline:none;}
+.form-control-custom:focus{border-color:rgba(79,110,247,.5);background:rgba(79,110,247,.05);box-shadow:0 0 0 3px rgba(79,110,247,.1);}
+.form-control-custom option{background:#1e293b;}
+.btn-primary-custom{background:linear-gradient(135deg,var(--primary),var(--primary-dark));border:none;border-radius:10px;padding:10px 20px;color:white;font-family:'Vazirmatn',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:7px;box-shadow:0 4px 15px rgba(79,110,247,.3);}
+.btn-primary-custom:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(79,110,247,.4);}
+.btn-success-custom{background:linear-gradient(135deg,var(--success),#059669);border:none;border-radius:10px;padding:10px 20px;color:white;font-family:'Vazirmatn',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:7px;}
+.btn-success-custom:hover{transform:translateY(-1px);}
+.btn-warning-custom{background:linear-gradient(135deg,var(--warning),#d97706);border:none;border-radius:10px;padding:10px 20px;color:white;font-family:'Vazirmatn',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:7px;}
+.btn-danger-custom{background:linear-gradient(135deg,var(--danger),#dc2626);border:none;border-radius:10px;padding:10px 20px;color:white;font-family:'Vazirmatn',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:7px;}
+.btn-outline-custom{background:transparent;border:1px solid var(--border);border-radius:10px;padding:8px 16px;color:var(--text-secondary);font-family:'Vazirmatn',sans-serif;font-size:12.5px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;}
+.btn-outline-custom:hover{border-color:var(--primary);color:var(--primary);background:rgba(79,110,247,.05);}
+.alert-custom{padding:12px 16px;border-radius:10px;display:flex;align-items:center;gap:10px;font-size:12.5px;}
+.alert-warning{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#fbbf24;}
+.alert-danger{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#f87171;}
+.alert-success{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);color:#34d399;}
+.alert-info{background:rgba(79,110,247,.1);border:1px solid rgba(79,110,247,.2);color:#818cf8;}
+.progress-bar-container{background:rgba(255,255,255,.05);border-radius:20px;height:5px;overflow:hidden;}
+.progress-bar-fill{height:100%;border-radius:20px;transition:width .6s ease;}
+.toast-container{position:fixed;bottom:20px;left:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+@media(max-width:576px){
+  .toast-container{bottom:80px;left:10px;right:10px;}
+  .toast-item{min-width:unset;width:100%;}
+}
+.toast-item{background:rgba(15,23,42,.95);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:12.5px;min-width:260px;animation:slideInToast .3s ease;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+@keyframes slideInToast{from{transform:translateX(-20px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.mobile-toggle{display:none;position:fixed;top:14px;right:14px;z-index:1100;width:40px;height:40px;background:var(--primary);border-radius:12px;align-items:center;justify-content:center;cursor:pointer;color:white;font-size:17px;border:none;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;backdrop-filter:blur(4px);}
+.sidebar-overlay.show{display:block;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);z-index:8000;display:none;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#0f172a;border:1px solid var(--border);border-radius:20px;padding:28px;width:100%;max-width:480px;box-shadow:0 24px 80px rgba(0,0,0,.5);animation:modalIn .25s ease;max-height:90vh;overflow-y:auto;}
+@keyframes modalIn{from{transform:scale(.95);opacity:0;}to{transform:scale(1);opacity:1;}}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:10px;}
+
+/* USER CARD */
+.user-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;align-items:center;gap:12px;transition:all .2s;margin-bottom:8px;}
+.user-card:hover{border-color:rgba(255,255,255,.12);background:var(--bg-card-hover);}
+.user-card-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;}
+.user-card-actions{margin-right:auto;display:flex;gap:6px;}
+
+/* PKG INVENTORY GRID */
+.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-top:12px;}
+.inv-pkg-card{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 10px;text-align:center;transition:all .2s;cursor:default;}
+.inv-pkg-card:hover{border-color:rgba(79,110,247,.3);background:rgba(79,110,247,.05);}
+.inv-pkg-card .pkg-name{font-size:12px;font-weight:700;color:var(--text-primary);margin-bottom:6px;}
+.inv-pkg-card .pkg-qty{font-size:22px;font-weight:800;line-height:1;}
+.inv-pkg-card .pkg-label{font-size:10px;color:var(--text-muted);margin-top:3px;}
+
+/* REPORT TABS */
+.report-tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.report-tab{padding:7px 14px;border-radius:8px;font-size:12.5px;cursor:pointer;border:1px solid var(--border);color:var(--text-secondary);background:transparent;font-family:'Vazirmatn',sans-serif;transition:all .2s;}
+.report-tab.active,.report-tab:hover{background:var(--primary);border-color:var(--primary);color:white;}
+
+/* ACTIVITY */
+.activity-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.activity-item:last-child{border-bottom:none;}
+.activity-dot{width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.activity-text{font-size:12px;color:var(--text-secondary);line-height:1.5;}
+.activity-text strong{color:var(--text-primary);}
+.activity-time{font-size:10px;color:var(--text-muted);margin-top:2px;}
+
+/* CHARTS GRID */
+.charts-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:18px;}
+
+/* LIGHT THEME */
+body.light-theme{--bg-dark:#f0f4ff;--bg-card:rgba(255,255,255,.85);--bg-card-hover:rgba(255,255,255,.95);--border:rgba(0,0,0,.09);--text-primary:#0f172a;--text-secondary:#334155;--text-muted:#64748b;}
+body.light-theme .sidebar{background:rgba(255,255,255,.97);}
+body.light-theme .topbar{background:rgba(255,255,255,.92);}
+body.light-theme .toast-item{background:rgba(255,255,255,.97);color:#0f172a;}
+body.light-theme .modal-box{background:#ffffff;}
+body.light-theme #loginPage{background:#f0f4ff;}
+body.light-theme .login-box{background:rgba(255,255,255,.95);}
+body.light-theme .login-input,.body.light-theme .form-control-custom{background:rgba(0,0,0,.04);color:#0f172a;}
+body.light-theme .form-control-custom{background:rgba(0,0,0,.04);color:#0f172a;}
+body.light-theme .form-control-custom option{background:#fff;}
+body.light-theme .data-table thead th{background:rgba(0,0,0,.03);}
+body.light-theme .inv-pkg-card{background:rgba(0,0,0,.03);}
+
+
+/* Form grids */
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;}
+.form-grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;}
+.form-grid-5{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;}
+
+/* SEARCH */
+.search-input-wrap{position:relative;}.search-input-wrap i{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:12px;pointer-events:none;}
+.search-input-wrap input{padding-right:32px;}
+
+/* TRANSFER MODAL wider */
+#transferModal .modal-box{max-width:520px;}
+
+@media(max-width:992px){
+  .sidebar{transform:translateX(100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main-content{margin-right:0;}
+  .mobile-toggle{display:flex;}
+  .charts-grid{grid-template-columns:1fr;}
+  .stat-grid{grid-template-columns:repeat(2,1fr);}
+}
+/* ═══════════ TABLET ═══════════ */
+@media(max-width:768px){
+  .stat-grid{grid-template-columns:repeat(2,1fr);}
+  .form-grid-3{grid-template-columns:1fr 1fr!important;}
+  .form-grid-4{grid-template-columns:1fr 1fr!important;}
+  .form-grid-5{grid-template-columns:1fr 1fr!important;}
+  .topbar{padding:10px 14px;}
+  .topbar-title{font-size:15px;}
+  .card-header-custom{flex-wrap:wrap;gap:8px;}
+  .card-header-custom .title{font-size:13px;}
+  .modal-box{margin:10px;width:calc(100% - 20px);max-width:none;padding:20px;}
+  .inv-grid{grid-template-columns:repeat(auto-fill,minmax(90px,1fr));}
+}
+/* ═══════════ MOBILE ═══════════ */
+@media(max-width:576px){
+  .stat-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .page-content{padding:12px;}
+  .topbar{padding:10px 12px;}
+  .topbar-title{font-size:14px;}
+  .topbar-subtitle{display:none;}
+  .topbar-actions .btn-icon{width:32px;height:32px;font-size:13px;}
+  /* Forms — single column */
+  .form-grid-2,.form-grid-3,.form-grid-4,.form-grid-5{grid-template-columns:1fr!important;}
+  /* Tables scroll */
+  .data-table{font-size:11px;}
+  .data-table thead th,.data-table tbody td{padding:8px 8px;}
+  /* Buttons full width on mobile */
+  .btn-primary-custom,.btn-success-custom,.btn-warning-custom,.btn-danger-custom{width:100%;justify-content:center;margin-bottom:6px;}
+  /* Card headers stack */
+  .card-header-custom{flex-direction:column;align-items:flex-start;gap:10px;}
+  .card-header-custom>div:last-child{width:100%;}
+  /* Search wrap full width */
+  .search-input-wrap{max-width:100%!important;width:100%;}
+  /* Report tabs wrap */
+  .report-tabs{gap:6px;}
+  .report-tab{padding:6px 10px;font-size:11.5px;}
+  /* Inv grid smaller */
+  .inv-grid{grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;}
+  .inv-pkg-card{padding:10px 6px;}
+  .inv-pkg-card .pkg-qty{font-size:18px;}
+  /* User card stack */
+  .user-card{flex-wrap:wrap;}
+  .user-card-actions{margin-right:0;margin-top:8px;width:100%;justify-content:flex-end;}
+  /* Modal full screen */
+  .modal-overlay{align-items:flex-end;}
+  .modal-box{border-radius:20px 20px 0 0;margin:0;width:100%;max-width:100%;max-height:90vh;}
+  /* Login box */
+  .login-box{padding:30px 20px;border-radius:20px;}
+  /* Stat cards */
+  .stat-card{padding:14px;}
+  .stat-value{font-size:20px;}
+  /* Charts */
+  .charts-grid{grid-template-columns:1fr;}
+  /* Topbar actions hide date */
+  #dateDisplay{display:none;}
+  /* Bottom nav for mobile */
+  .mobile-bottom-nav{display:flex!important;}
+  .main-content{padding-bottom:70px;}
+}
+/* ═══════════ MOBILE BOTTOM NAV ═══════════ */
+.mobile-bottom-nav{
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:1050;
+  background:rgba(10,15,30,.97);backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  padding:8px 4px 12px;
+  justify-content:space-around;align-items:center;
+}
+.mob-nav-item{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:6px 10px;border-radius:10px;cursor:pointer;
+  color:var(--text-muted);font-size:9px;font-weight:600;
+  transition:all .2s;min-width:52px;text-align:center;
+}
+.mob-nav-item i{font-size:18px;}
+.mob-nav-item.active,.mob-nav-item:active{color:var(--primary);}
+.mob-nav-item.active i{color:var(--primary);}
+body.light-theme .mobile-bottom-nav{background:rgba(255,255,255,.97);}
+@media print{.sidebar,.topbar,.mobile-toggle,.sidebar-overlay,.toast-container,.mobile-bottom-nav{display:none!important;}.main-content{margin-right:0!important;padding-bottom:0!important;}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ LOGIN ═══════════════════ -->
+<div id="loginPage">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="icon"><i class="fas fa-wifi"></i></div>
+      <h1>ISP Manager</h1>
+      <p>سیستم مدیریت موجودی و فروش</p>
+    </div>
+    <div class="login-error" id="loginError"><i class="fas fa-exclamation-circle"></i> <span id="loginErrMsg">نام کاربری یا رمز عبور اشتباه است</span></div>
+    <div class="login-field">
+      <label>نام کاربری</label>
+      <input type="text" class="login-input" id="loginUsername" placeholder="نام کاربری را وارد کنید" autocomplete="off">
+    </div>
+    <div class="login-field">
+      <label>رمز عبور</label>
+      <div class="pwd-wrapper">
+        <input type="password" class="login-input" id="loginPassword" placeholder="رمز عبور را وارد کنید" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()">
+        <button class="pwd-toggle" onclick="togglePwd()" type="button" id="pwdToggleBtn"><i class="fas fa-eye"></i></button>
+      </div>
+    </div>
+    <button class="login-btn" onclick="doLogin()"><i class="fas fa-sign-in-alt"></i> ورود به سیستم</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ APP ═══════════════════ -->
+<div id="appPage" style="display:none;">
+
+<!-- EXPORT REMINDER BANNER -->
+<div id="exportReminderBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:2000;background:linear-gradient(135deg,#4f6ef7,#7c3aed);padding:10px 16px;align-items:center;gap:10px;justify-content:space-between;box-shadow:0 4px 20px rgba(79,110,247,.5);">
+  <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:white;flex:1;min-width:0;">
+    <i class="fas fa-info-circle" style="font-size:15px;flex-shrink:0;"></i>
+    <span style="line-height:1.4;">کاربر جدید اضافه شد! برای کار روی <strong>همه دستگاه‌ها</strong> فایل را دانلود و روی Netlify آپلود کنید.</span>
+  </div>
+  <div style="display:flex;gap:6px;flex-shrink:0;margin-right:8px;">
+    <button onclick="exportHtmlWithUsers()" style="background:white;color:#4f6ef7;border:none;border-radius:8px;padding:7px 12px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:'Vazirmatn',sans-serif;white-space:nowrap;"><i class="fas fa-download"></i> دانلود</button>
+    <button onclick="dismissExportReminder()" style="background:rgba(255,255,255,.25);color:white;border:none;border-radius:8px;padding:7px 10px;font-size:14px;cursor:pointer;line-height:1;">×</button>
+  </div>
+</div>
+
+<button class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-logo">
+      <div class="brand-icon"><i class="fas fa-wifi"></i></div>
+      <div class="brand-text">
+        <div class="name" id="sidebarCompany">ISP Manager</div>
+        <div class="sub">INVENTORY v4.0</div>
+      </div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-lbl">اصلی</div>
+    <div class="nav-item active" onclick="showPage('dashboard')"><span class="nav-icon"><i class="fas fa-chart-pie"></i></span> داشبورد</div>
+
+    <div class="nav-lbl">انبار</div>
+    <div class="nav-item admin-only" onclick="showPage('warehouse')"><span class="nav-icon"><i class="fas fa-warehouse"></i></span> مدیریت انبار</div>
+    <div class="nav-item" onclick="showPage('my_inventory')"><span class="nav-icon"><i class="fas fa-boxes"></i></span> موجودی من</div>
+    <div class="nav-item admin-only" onclick="showPage('inv_transfer')"><span class="nav-icon"><i class="fas fa-people-arrows"></i></span> انتقال بین کاربران</div>
+
+    <div class="nav-lbl">فروش</div>
+    <div class="nav-item" onclick="showPage('sales')"><span class="nav-icon"><i class="fas fa-cash-register"></i></span> ثبت فروش</div>
+    <div class="nav-item" onclick="showPage('returns')"><span class="nav-icon"><i class="fas fa-undo"></i></span> برگشت به انبار</div>
+
+    <div class="nav-lbl">گزارش‌ها</div>
+    <div class="nav-item" onclick="showPage('reports')"><span class="nav-icon"><i class="fas fa-chart-bar"></i></span> گزارش فروش</div>
+    <div class="nav-item admin-only" onclick="showPage('inv_logs')"><span class="nav-icon"><i class="fas fa-history"></i></span> لاگ انبار <span class="nav-badge" id="invLogBadge">0</span></div>
+    <div class="nav-item admin-only" onclick="showPage('logs')"><span class="nav-icon"><i class="fas fa-stream"></i></span> لاگ سیستم</div>
+
+    <div class="nav-lbl admin-only">مدیریت</div>
+    <div class="nav-item admin-only" onclick="showPage('users')"><span class="nav-icon"><i class="fas fa-users-cog"></i></span> مدیریت کاربران</div>
+    <div class="nav-item admin-only" onclick="showPage('packages')"><span class="nav-icon"><i class="fas fa-box"></i></span> مدیریت بسته‌ها</div>
+    <div class="nav-item admin-only" onclick="showPage('settings')"><span class="nav-icon"><i class="fas fa-cog"></i></span> تنظیمات</div>
+
+    <div class="nav-lbl" style="margin-top:4px;"></div>
+    <div class="nav-item" onclick="showPage('profile')"><span class="nav-icon"><i class="fas fa-user-circle"></i></span> پروفایل من</div>
+    <div class="nav-item danger-item" onclick="doLogout()"><span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span> خروج</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar" id="sidebarAvatar">م</div>
+      <div class="user-details">
+        <div class="uname" id="sidebarName">—</div>
+        <div class="urole" id="sidebarRole">—</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="pageTitle">داشبورد</div>
+      <div class="topbar-subtitle" id="pageSubtitle">نمای کلی سیستم</div>
+    </div>
+    <div class="topbar-actions">
+      <div class="btn-icon" onclick="manualRefresh()"><i class="fas fa-sync-alt" id="refreshIcon"></i></div>
+      <div class="btn-icon" onclick="toggleTheme()" id="themeBtn"><i class="fas fa-moon"></i></div>
+      <!-- Export button always visible for admin -->
+      <div class="btn-icon admin-only" onclick="exportHtmlWithUsers()" title="دانلود فایل برای همه دستگاه‌ها" style="background:rgba(79,110,247,.15);border-color:rgba(79,110,247,.3);color:var(--primary);"><i class="fas fa-download"></i></div>
+      <div class="btn-icon" id="dateDisplay" style="width:auto;padding:0 12px;font-size:11px;color:var(--text-muted);"></div>
+    </div>
+  </div>
+
+  <!-- ════════ DASHBOARD ════════ -->
+  <div class="page-content active" id="page-dashboard">
+    <div class="stat-grid" id="dashStats"></div>
+    <div class="charts-grid">
+      <div class="glass-card">
+        <div class="card-header-custom">
+          <div class="title"><div class="icon" style="background:rgba(79,110,247,.15);color:var(--primary);"><i class="fas fa-chart-line"></i></div>فروش ۷ روز اخیر</div>
+        </div>
+        <div class="card-body-custom"><canvas id="dailySalesChart" height="80"></canvas></div>
+      </div>
+      <div class="glass-card">
+        <div class="card-header-custom">
+          <div class="title"><div class="icon" style="background:rgba(124,58,237,.15);color:var(--secondary);"><i class="fas fa-chart-pie"></i></div>توزیع بسته‌ها</div>
+        </div>
+        <div class="card-body-custom"><canvas id="packagePieChart" height="130"></canvas></div>
+      </div>
+    </div>
+    <div class="glass-card">
+      <div class="card-header-custom">
+        <div class="title"><div class="icon" style="background:rgba(6,182,212,.15);color:var(--accent);"><i class="fas fa-table"></i></div>جدول موجودی و فروش</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input type="date" id="smartTableDate" class="form-control-custom" style="padding:5px 10px;font-size:11px;width:150px;" oninput="renderSmartTable()">
+          <button class="btn-outline-custom" onclick="document.getElementById('smartTableDate').value=today();renderSmartTable();" style="font-size:11px;padding:5px 10px;">امروز</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>بسته</th><th>موجودی من</th><th>فروش امروز</th><th>فروش ماه</th><th>وضعیت</th></tr></thead>
+          <tbody id="smartTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="glass-card">
+      <div class="card-header-custom">
+        <div class="title"><div class="icon" style="background:rgba(245,158,11,.15);color:var(--warning);"><i class="fas fa-bolt"></i></div>آخرین فعالیت‌ها</div>
+      </div>
+      <div class="card-body-custom" id="recentActivity"></div>
+    </div>
+  </div>
+
+  <!-- ════════ WAREHOUSE (admin) ════════ -->
+  <div class="page-content" id="page-warehouse">
+    <!-- Add stock panel -->
+    <div class="glass-card">
+      <div class="card-header-custom">
+        <div class="title"><div class="icon" style="background:rgba(16,185,129,.15);color:var(--success);"><i class="fas fa-plus-circle"></i></div>افزودن موجودی به کاربر</div>
+      </div>
+      <div class="card-body-custom">
+        <div style="display:grid;gap:14px;align-items:end;" class="form-grid-5">
+          <div><label class="form-label-custom">کاربر</label><select class="form-control-custom" id="whUser"></select></div>
+          <div><label class="form-label-custom">بسته</label><select class="form-control-custom" id="whPkg"></select></div>
+          <div><label class="form-label-custom">عملیات</label><select class="form-control-custom" id="whOp"><option value="add">➕ افزودن</option><option value="remove">➖ کاهش</option></select></div>
+          <div><label class="form-label-custom">تعداد</label><input class="form-control-custom" id="whQty" type="number" min="1" placeholder="تعداد" oninput="updateWhInfo()"></div>
+          <div><button class="btn-success-custom" onclick="doWarehouseOp()"><i class="fas fa-check"></i> ثبت</button></div>
+        </div>
+        <div style="margin-top:14px;"><label class="form-label-custom">توضیحات (اختیاری)</label><input class="form-control-custom" id="whNote" placeholder="دلیل یا توضیح"></div>
+        <div class="alert-custom alert-info" style="margin-top:14px;" id="whInfo"><i class="fas fa-info-circle"></i> کاربر، بسته و تعداد را وارد کنید</div>
+      </div>
+    </div>
+    <!-- All users inventory -->
+    <div class="glass-card">
+      <div class="card-header-custom">
+        <div class="title"><div class="icon" style="background:rgba(79,110,247,.15);color:var(--primary);"><i class="fas fa-users"></i></div>موجودی همه کاربران</div>
+        <div class="search-input-wrap" style="max-width:200px;">
+          <i class="fas fa-search"></i>
+          <input class="form-control-custom" id="whSearchUser" placeholder="جستجو کاربر..." style="padding:6px 30px 6px 10px;font-size:11px;" oninput="renderAllUsersInventory()">
+        </div>
+      </div>
+      <div class="card-body-custom" id="allUsersInventory"></div>
+    </div>
+  </div>
+
+  <!-- ════════ MY INVENTORY ════════ -->
+  <div class="page-content" id="page-my_inventory">
+    <div class="glass-card">
+      <div class="card-header-custom">
+        <div class="title"><div class="icon" style="background:rgba(79,110,247,.15);color:var(--primary);"><i class="fas fa-boxes"></i></div>موجودی فعلی من</div>
+        <span id="myInvTotal" style="font-size:12px;color:var(--text-muted);"></span>
+      </div>
+      <div class="card-body-custom">
+        <div class="inv-grid" id="myInvGrid"></div>
+      </div>
+    </div>
+    <div class="glass-card">
+      <div class="card-header-custom">
+        <div class="title"><div class="icon" style="background:rgba(245,158,11,.15);color:var(--warning);"><i class="fas fa-history"></i></div>تاریخچه انبار من</div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>تاریخ/ساعت</th><th>بسته</th><th>عملیات</th><th>تعداد</th><th>توضیحات</th></tr></thead>
+          <tbody id="myInvLogsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ TRANSFER (admin) ════════ -->
+  <div class="page-content" id="page-inv_transfer">
+    <div class="glass-card">
+      <div class="card-header-custom">
+        <div class="title"><div class="icon" style="background:rgba(124,58,237,.15);color:var(--secondary);"><i class="fas fa-people-arrows"></i></div>انتقال موجودی بین کاربران</div>
+      </div>
+      <div class="card-body-custom">
+        <div style="display:grid;gap:14px;margin-bottom:14px;" class="form-grid-4">
+          <div><label class="form-label-custom">از کاربر</label><select class="form-control-custom" id="trFrom" onchange="updateTrInfo()"></select></div>
+          <div><label class="form-label-custom">به کاربر</label><select class="form-control-custom" id="trTo" onchange="updateTrInfo()"></select></div>
+          <div><label class="form-label-custom">بسته</label><select class="form-control-custom" id="trPkg" onchange="updateTrInfo()"></select></div>
+          <div><label class="form-label-custom">تعداد</label><input class="form-control-custom" id="trQty" type="number" min="1" placeholder="تعداد" oninput="updateTrInfo()"></div>
+        </div>
+        <div style="margin-bottom:14px;"><label class="form-label-custom">توضیحات</label><input class="form-control-custom" id="trNote" placeholder="دلیل انتقال"></div>
+        <div class="alert-custom alert-info" id="trInfo" style="margin-bottom:14px;"><i class="fas fa-info-circle"></i> کاربران، بسته و تعداد را وارد کنید</div>
+        <button class="btn-primary-custom" onclick="doTransferBetweenUsers()"><i class="fas fa-people-arrows"></i> انتقال موجودی</button>
+      </div>
+    </div>
+    <div class="glass-card">
+      <div class="card-header-custom"><div class="title"><div class="icon" style="background:rgba(124,58,237,.15);color:var(--secondary);"><i class="fas fa-list"></i></div>تاریخچه انتقال‌ها</div></div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>تاریخ</th><th>از</th><th>به</th><th>بسته</th><th>تعداد</th><th>ادمین</th><th>توضیحات</th></tr></thead>
+          <tbody id="transferLogsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ SALES ════════ -->
+  <div class="page-content" id="page-sales">
+    <div class="glass-card">
+      <div class="card-header-custom"><div class="title"><div class="icon" style="background:rgba(16,185,129,.15);color:var(--success);"><i class="fas fa-cash-register"></i></div>ثبت فروش جدید</div></div>
+      <div class="card-body-custom">
+        <div style="display:grid;gap:16px;" class="form-grid-3">
+          <div><label class="form-label-custom">نوع بسته</label><select class="form-control-custom" id="salePackage" onchange="updateSaleInfo()"></select></div>
+          <div><label class="form-label-custom">تعداد</label><input class="form-control-custom" id="saleQty" type="number" min="1" placeholder="تعداد" oninput="updateSaleInfo()"></div>
+          <div><label class="form-label-custom">تاریخ</label><input class="form-control-custom" id="saleDate" type="date"></div>
+          <div><label class="form-label-custom">نام فروشنده</label><input class="form-control-custom" id="saleSeller" placeholder="نام فروشنده"></div>
+          <div><label class="form-label-custom">توضیحات</label><input class="form-control-custom" id="saleNote" placeholder="اختیاری"></div>
+        </div>
+        <div class="alert-custom alert-info" style="margin-top:14px;" id="saleInfo"><i class="fas fa-info-circle"></i> بسته و تعداد را وارد کنید</div>
+        <div style="margin-top:14px;"><button class="btn-success-custom" onclick="doSale()"><i class="fas fa-check"></i> ثبت فروش</button></div>
+      </div>
+    </div>
+    <div class="glass-card">
+      <div class="card-header-custom">
+        <div class="title"><div class="icon" style="background:rgba(79,110,247,.15);color:var(--primary);"><i class="fas fa-list-alt"></i></div>تاریخچه فروش</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center;">
+          <div class="search-input-wrap" style="max-width:180px;"><i class="fas fa-search"></i><input class="form-control-custom" id="salesSearch" placeholder="جستجو..." style="padding:5px 28px 5px 10px;font-size:11px;" oninput="renderSalesHistory()"></div>
+          <button class="btn-outline-custom" onclick="setSalesFilter('today')" style="font-size:11px;padding:5px 10px;">امروز</button>
+          <button class="btn-outline-custom" onclick="setSalesFilter('week')" style="font-size:11px;padding:5px 10px;">هفته</button>
+          <button class="btn-outline-custom" onclick="setSalesFilter('all')" style="font-size:11px;padding:5px 10px;">همه</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>تاریخ</th><th>بسته</th><th>تعداد</th><th>مبلغ</th><th>فروشنده</th><th>توضیحات</th><th class="admin-only">عملیات</th></tr></thead>
+          <tbody id="salesHistoryBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ RETURNS ════════ -->
+  <div class="page-content" id="page-returns">
+    <div class="glass-card">
+      <div class="card-header-custom"><div class="title"><div class="icon" style="background:rgba(245,158,11,.15);color:var(--warning);"><i class="fas fa-undo"></i></div>برگشت بسته به انبار خودم</div></div>
+      <div class="card-body-custom">
+        <div style="display:grid;gap:16px;" class="form-grid-3">
+          <div><label class="form-label-custom">نوع بسته</label><select class="form-control-custom" id="returnPackage" onchange="updateReturnInfo()"></select></div>
+          <div><label class="form-label-custom">تعداد برگشتی</label><input class="form-control-custom" id="returnQty" type="number" min="1" placeholder="تعداد" oninput="updateReturnInfo()"></div>
+          <div><label class="form-label-custom">تاریخ</label><input class="form-control-custom" id="returnDate" type="date"></div>
+          <div style="grid-column:1/-1;"><label class="form-label-custom">دلیل برگشت</label><input class="form-control-custom" id="returnNote" placeholder="دلیل"></div>
+        </div>
+        <div class="alert-custom alert-warning" style="margin-top:14px;" id="returnInfo"><i class="fas fa-info-circle"></i> بسته و تعداد را وارد کنید</div>
+        <div style="margin-top:14px;"><button class="btn-warning-custom" onclick="doReturn()"><i class="fas fa-undo"></i> ثبت برگشت</button></div>
+      </div>
+    </div>
+    <div class="glass-card">
+      <div class="card-header-custom"><div class="title"><div class="icon" style="background:rgba(245,158,11,.15);color:var(--warning);"><i class="fas fa-list"></i></div>تاریخچه برگشت‌ها</div></div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>تاریخ</th><th>بسته</th><th>تعداد</th><th>کاربر</th><th>توضیحات</th></tr></thead>
+          <tbody id="returnsHistoryBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ REPORTS ════════ -->
+  <div class="page-content" id="page-reports">
+    <div class="report-tabs">
+      <button class="report-tab active" onclick="setReportPeriod('daily',this)">روزانه</button>
+      <button class="report-tab" onclick="setReportPeriod('weekly',this)">هفتگی</button>
+      <button class="report-tab" onclick="setReportPeriod('monthly',this)">ماهانه</button>
+      <button class="report-tab" onclick="setReportPeriod('yearly',this)">سالانه</button>
+    </div>
+    <div style="display:grid;gap:14px;margin-bottom:18px;" class="form-grid-3">
+      <div class="stat-card" style="--card-color:var(--primary);"><div class="stat-icon" style="background:rgba(79,110,247,.15);color:var(--primary);"><i class="fas fa-shopping-cart"></i></div><div class="stat-value" id="rpt-qty">0</div><div class="stat-label">تعداد فروش دوره</div></div>
+      <div class="stat-card" style="--card-color:var(--success);"><div class="stat-icon" style="background:rgba(16,185,129,.15);color:var(--success);"><i class="fas fa-coins"></i></div><div class="stat-value" id="rpt-rev">0</div><div class="stat-label">درآمد (افغانی)</div></div>
+      <div class="stat-card" style="--card-color:var(--warning);"><div class="stat-icon" style="background:rgba(245,158,11,.15);color:var(--warning);"><i class="fas fa-star"></i></div><div class="stat-value" id="rpt-best">-</div><div class="stat-label">پرفروش‌ترین</div></div>
+    </div>
+    <div class="glass-card">
+      <div class="card-header-custom"><div class="title"><div class="icon" style="background:rgba(79,110,247,.15);color:var(--primary);"><i class="fas fa-chart-bar"></i></div>نمودار فروش بر اساس بسته</div></div>
+      <div class="card-body-custom"><canvas id="reportBarChart" height="70"></canvas></div>
+    </div>
+    <div class="glass-card">
+      <div class="card-header-custom"><div class="title"><div class="icon" style="background:rgba(6,182,212,.15);color:var(--accent);"><i class="fas fa-table"></i></div>جزئیات فروش</div></div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>بسته</th><th>تعداد</th><th>درآمد</th><th>درصد</th><th>وضعیت</th></tr></thead>
+          <tbody id="reportTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ INV LOGS (admin) ════════ -->
+  <div class="page-content" id="page-inv_logs">
+    <div class="glass-card">
+      <div class="card-header-custom">
+        <div class="title"><div class="icon" style="background:rgba(245,158,11,.15);color:var(--warning);"><i class="fas fa-history"></i></div>تاریخچه کامل تغییرات انبار</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <select class="form-control-custom" id="invLogFilterUser" style="font-size:11px;padding:5px 10px;width:150px;" onchange="renderInvLogs()">
+            <option value="">همه کاربران</option>
+          </select>
+          <select class="form-control-custom" id="invLogFilterPkg" style="font-size:11px;padding:5px 10px;width:120px;" onchange="renderInvLogs()">
+            <option value="">همه بسته‌ها</option>
+          </select>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>تاریخ/ساعت</th><th>کاربر</th><th>عملیات</th><th>بسته</th><th>تعداد</th><th>ادمین</th><th>توضیحات</th></tr></thead>
+          <tbody id="invLogsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ SYSTEM LOGS (admin) ════════ -->
+  <div class="page-content" id="page-logs">
+    <div class="glass-card">
+      <div class="card-header-custom">
+        <div class="title"><div class="icon" style="background:rgba(124,58,237,.15);color:var(--secondary);"><i class="fas fa-stream"></i></div>لاگ فعالیت‌های سیستم</div>
+        <button class="btn-outline-custom" onclick="clearLogs()" style="font-size:11px;padding:5px 12px;"><i class="fas fa-trash"></i> پاک کردن</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>زمان</th><th>کاربر</th><th>عملیات</th><th>جزئیات</th></tr></thead>
+          <tbody id="logsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ USERS (admin) ════════ -->
+  <div class="page-content" id="page-users">
+    <div class="glass-card">
+      <div class="card-header-custom"><div class="title"><div class="icon" style="background:rgba(79,110,247,.15);color:var(--primary);"><i class="fas fa-user-plus"></i></div>افزودن کاربر جدید</div></div>
+      <div class="card-body-custom">
+        <div style="display:grid;gap:12px;margin-bottom:14px;" class="form-grid-2">
+          <div><label class="form-label-custom">نام کامل</label><input class="form-control-custom" id="newUserName" placeholder="نام کاربر"></div>
+          <div><label class="form-label-custom">نام کاربری</label><input class="form-control-custom" id="newUserUsername" placeholder="username" dir="ltr"></div>
+          <div><label class="form-label-custom">رمز عبور</label><input class="form-control-custom" id="newUserPwd" type="password" placeholder="حداقل ۶ کاراکتر" dir="ltr"></div>
+          <div><label class="form-label-custom">نقش</label>
+            <select class="form-control-custom" id="newUserRole">
+              <option value="admin">🛡 مدیر کل</option>
+              <option value="operator" selected>👤 اپراتور (فروشنده)</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-primary-custom" onclick="addUser()" style="width:100%;justify-content:center;margin-bottom:14px;"><i class="fas fa-plus"></i> افزودن کاربر</button>
+        <div class="alert-custom alert-info" style="font-size:11.5px;"><i class="fas fa-info-circle"></i> اپراتور فقط موجودی خودش، فروش خودش و برگشت‌های خودش را می‌بیند. مدیر کل همه داده‌ها را می‌بیند.</div>
+      </div>
+    </div>
+    <div class="glass-card">
+      <div class="card-header-custom">
+        <div class="title"><div class="icon" style="background:rgba(6,182,212,.15);color:var(--accent);"><i class="fas fa-users"></i></div>لیست کاربران</div>
+        <span id="userCount" style="font-size:11px;color:var(--text-muted);"></span>
+      </div>
+      <div class="card-body-custom" id="usersListContainer"></div>
+    </div>
+  </div>
+
+  <!-- ════════ PACKAGES (admin) ════════ -->
+  <div class="page-content" id="page-packages">
+    <div class="glass-card">
+      <div class="card-header-custom"><div class="title"><div class="icon" style="background:rgba(79,110,247,.15);color:var(--primary);"><i class="fas fa-plus"></i></div>افزودن بسته جدید</div></div>
+      <div class="card-body-custom">
+        <div style="display:grid;gap:14px;align-items:end;" class="form-grid-4">
+          <div><label class="form-label-custom">نام بسته</label><input class="form-control-custom" id="newPkgName" placeholder="مثال: 50GB"></div>
+          <div><label class="form-label-custom">حجم (GB)</label><input class="form-control-custom" id="newPkgSize" type="number" placeholder="50"></div>
+          <div><label class="form-label-custom">قیمت فروش</label><input class="form-control-custom" id="newPkgPrice" type="number" placeholder="200"></div>
+          <div><button class="btn-primary-custom" onclick="addPackage()"><i class="fas fa-plus"></i> افزودن</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="glass-card">
+      <div class="card-header-custom"><div class="title"><div class="icon" style="background:rgba(6,182,212,.15);color:var(--accent);"><i class="fas fa-box"></i></div>لیست بسته‌ها</div></div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>#</th><th>نام</th><th>حجم</th><th>قیمت</th><th>عملیات</th></tr></thead>
+          <tbody id="packagesTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ SETTINGS (admin) ════════ -->
+  <div class="page-content" id="page-settings">
+    <div style="max-width:600px;">
+      <div class="glass-card">
+        <div class="card-header-custom"><div class="title"><div class="icon" style="background:rgba(79,110,247,.15);color:var(--primary);"><i class="fas fa-building"></i></div>اطلاعات شرکت</div></div>
+        <div class="card-body-custom">
+          <div style="margin-bottom:14px;"><label class="form-label-custom">نام شرکت</label><input class="form-control-custom" id="settingCompany" placeholder="نام شرکت ISP"></div>
+          <div style="margin-bottom:18px;"><label class="form-label-custom">واحد پول</label>
+            <select class="form-control-custom" id="settingCurrency"><option value="؋">افغانی (؋)</option><option value="$">دالر ($)</option><option value="﷼">ریال (﷼)</option></select>
+          </div>
+          <button class="btn-primary-custom" onclick="saveSettings()"><i class="fas fa-save"></i> ذخیره</button>
+        </div>
+      </div>
+      <div class="glass-card">
+        <div class="card-header-custom"><div class="title"><div class="icon" style="background:rgba(16,185,129,.15);color:var(--success);"><i class="fas fa-database"></i></div>پشتیبان‌گیری و صدور فایل</div></div>
+        <div class="card-body-custom">
+          <!-- Export HTML — most important button -->
+          <div style="background:linear-gradient(135deg,rgba(79,110,247,.15),rgba(124,58,237,.1));border:1px solid rgba(79,110,247,.3);border-radius:12px;padding:16px;margin-bottom:16px;">
+            <div style="font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:6px;"><i class="fas fa-file-export" style="color:var(--primary);margin-left:6px;"></i> صدور فایل HTML با کاربران</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">یک فایل HTML می‌سازد که <strong style="color:#34d399;">کاربران داخل آن ذخیره شده‌اند</strong>. این فایل را روی هر کامپیوتر یا تلفن باز کنید — همه کاربران بدون نیاز به تنظیم اضافه وارد می‌شوند.</div>
+            <button class="btn-primary-custom" onclick="exportHtmlWithUsers()" style="width:100%;justify-content:center;font-size:14px;padding:12px;">
+              <i class="fas fa-download"></i> دانلود فایل برای همه دستگاه‌ها
+            </button>
+          </div>
+          <div class="alert-custom alert-info" style="margin-bottom:14px;font-size:11.5px;"><i class="fas fa-info-circle"></i> پشتیبان JSON فقط داده‌ها را ذخیره می‌کند. برای انتقال به دستگاه دیگر از دکمه بالا استفاده کنید.</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn-success-custom" onclick="downloadBackup()"><i class="fas fa-file-archive"></i> پشتیبان JSON</button>
+            <label class="btn-warning-custom" style="cursor:pointer;"><i class="fas fa-upload"></i> بازگردانی از JSON<input type="file" accept=".json" style="display:none;" onchange="restoreBackup(this)"></label>
+          </div>
+          <div class="alert-custom alert-danger" style="margin-top:12px;font-size:11.5px;"><i class="fas fa-exclamation-triangle"></i> بازگردانی داده‌های فعلی را بازنویسی می‌کند.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ PROFILE ════════ -->
+  <div class="page-content" id="page-profile">
+    <div style="max-width:500px;">
+      <div class="glass-card">
+        <div class="card-header-custom"><div class="title"><div class="icon" style="background:rgba(79,110,247,.15);color:var(--primary);"><i class="fas fa-user-circle"></i></div>اطلاعات حساب</div></div>
+        <div class="card-body-custom" id="profileInfo"></div>
+      </div>
+      <div class="glass-card">
+        <div class="card-header-custom"><div class="title"><div class="icon" style="background:rgba(245,158,11,.15);color:var(--warning);"><i class="fas fa-key"></i></div>تغییر رمز عبور</div></div>
+        <div class="card-body-custom">
+          <div style="margin-bottom:12px;"><label class="form-label-custom">رمز فعلی</label><input class="form-control-custom" type="password" id="profileOldPwd" dir="ltr"></div>
+          <div style="margin-bottom:12px;"><label class="form-label-custom">رمز جدید</label><input class="form-control-custom" type="password" id="profileNewPwd" dir="ltr"></div>
+          <div style="margin-bottom:18px;"><label class="form-label-custom">تکرار رمز جدید</label><input class="form-control-custom" type="password" id="profileNewPwd2" dir="ltr"></div>
+          <button class="btn-warning-custom" onclick="changeOwnPassword()"><i class="fas fa-save"></i> ذخیره رمز جدید</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end main-content -->
+
+<!-- ═══ MOBILE BOTTOM NAV ═══ -->
+<nav class="mobile-bottom-nav" id="mobileBottomNav">
+  <div class="mob-nav-item active" onclick="showPage('dashboard');setMobNav(this)">
+    <i class="fas fa-chart-pie"></i><span>داشبورد</span>
+  </div>
+  <div class="mob-nav-item" onclick="showPage('my_inventory');setMobNav(this)">
+    <i class="fas fa-boxes"></i><span>موجودی</span>
+  </div>
+  <div class="mob-nav-item" onclick="showPage('sales');setMobNav(this)">
+    <i class="fas fa-cash-register"></i><span>فروش</span>
+  </div>
+  <div class="mob-nav-item" onclick="showPage('returns');setMobNav(this)">
+    <i class="fas fa-undo"></i><span>برگشت</span>
+  </div>
+  <div class="mob-nav-item" onclick="toggleSidebar();setMobNav(this)">
+    <i class="fas fa-bars"></i><span>منو</span>
+  </div>
+</nav>
+
+</div><!-- end appPage -->
+
+<!-- ═══ MODALS ═══ -->
+<!-- Edit Package -->
+<div class="modal-overlay" id="editPkgModal">
+  <div class="modal-box">
+    <div class="modal-title"><i class="fas fa-edit" style="color:var(--primary);"></i> ویرایش بسته</div>
+    <input type="hidden" id="editPkgId">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+      <div><label class="form-label-custom">نام</label><input class="form-control-custom" id="editPkgName"></div>
+      <div><label class="form-label-custom">حجم (GB)</label><input class="form-control-custom" id="editPkgSize" type="number"></div>
+    </div>
+    <div style="margin-bottom:18px;"><label class="form-label-custom">قیمت (خالی = بدون تغییر)</label><input class="form-control-custom" id="editPkgPrice" type="number" placeholder="خالی بگذارید"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn-outline-custom" onclick="closeModal('editPkgModal')"><i class="fas fa-times"></i> انصراف</button>
+      <button class="btn-primary-custom" onclick="saveEditPackage()"><i class="fas fa-save"></i> ذخیره</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Sale -->
+<div class="modal-overlay" id="editSaleModal">
+  <div class="modal-box">
+    <div class="modal-title"><i class="fas fa-edit" style="color:var(--primary);"></i> ویرایش فروش</div>
+    <input type="hidden" id="editSaleIdx">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div><label class="form-label-custom">بسته</label><select class="form-control-custom" id="editSalePkg"></select></div>
+      <div><label class="form-label-custom">تعداد</label><input class="form-control-custom" type="number" id="editSaleQty" min="1"></div>
+      <div><label class="form-label-custom">فروشنده</label><input class="form-control-custom" id="editSaleSeller"></div>
+      <div><label class="form-label-custom">تاریخ</label><input class="form-control-custom" type="date" id="editSaleDate"></div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label-custom">توضیحات</label><input class="form-control-custom" id="editSaleNote"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn-outline-custom" onclick="closeModal('editSaleModal')"><i class="fas fa-times"></i> انصراف</button>
+      <button class="btn-primary-custom" onclick="saveEditSale()"><i class="fas fa-save"></i> ذخیره</button>
+    </div>
+  </div>
+</div>
+
+<!-- Change Password (admin for other users) -->
+<div class="modal-overlay" id="changePwdModal">
+  <div class="modal-box">
+    <div class="modal-title"><i class="fas fa-key" style="color:var(--warning);"></i> تغییر رمز عبور</div>
+    <input type="hidden" id="changePwdUserId">
+    <div style="margin-bottom:16px;"><label class="form-label-custom">رمز عبور جدید</label><input class="form-control-custom" type="password" id="changePwdNew" dir="ltr" placeholder="حداقل ۶ کاراکتر"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn-outline-custom" onclick="closeModal('changePwdModal')"><i class="fas fa-times"></i> انصراف</button>
+      <button class="btn-warning-custom" onclick="saveChangePwd()"><i class="fas fa-save"></i> ذخیره</button>
+    </div>
+  </div>
+</div>
+
+<!-- View User Inventory (admin) -->
+<div class="modal-overlay" id="viewUserInvModal">
+  <div class="modal-box" style="max-width:560px;">
+    <div class="modal-title"><i class="fas fa-boxes" style="color:var(--accent);"></i> <span id="viewUserInvTitle">موجودی کاربر</span></div>
+    <div class="inv-grid" id="viewUserInvGrid"></div>
+    <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:14px;">
+      <div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:10px;">تاریخچه اخیر:</div>
+      <div style="overflow-x:auto;max-height:200px;overflow-y:auto;">
+        <table class="data-table"><thead><tr><th>تاریخ</th><th>بسته</th><th>عملیات</th><th>تعداد</th></tr></thead><tbody id="viewUserInvLogsBody"></tbody></table>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:14px;">
+      <button class="btn-outline-custom" onclick="closeModal('viewUserInvModal')"><i class="fas fa-times"></i> بستن</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// CONSTANTS & STORAGE KEYS
+// ══════════════════════════════════════════════════════
+const USERS_KEY    = 'isp_users_v1';
+const SESSION_KEY  = 'isp_session_v1';
+const SETTINGS_KEY = 'isp_settings_v1';
+const STATE_KEY    = 'isp_state_v4';
+const ALL_USER_KEYS    = ['isp_users_v1','isp_users_v4','isp_users_v3','isp_users_v2'];
+const ALL_SESSION_KEYS = ['isp_session_v1','isp_session_v4','isp_session_v3','isp_session_v2'];
+
+// ══════════════════════════════════════════════════════
+// EMBEDDED USERS — کاربران داخل فایل HTML ذخیره می‌شوند
+// با دکمه "صدور فایل با کاربران" این آرایه به‌روز می‌شود
+// ══════════════════════════════════════════════════════
+const EMBEDDED_USERS = []; /* __EMBEDDED_USERS_PLACEHOLDER__ */
+
+// ══════════════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════════════
+function hashPwd(p){let h=0;for(let i=0;i<p.length;i++){h=((h<<5)-h)+p.charCodeAt(i);h|=0;}return h.toString(36);}
+
+function mergeUserLists(...arrays){
+  const map={};
+  arrays.forEach(arr=>{
+    if(!Array.isArray(arr))return;
+    arr.forEach(u=>{
+      if(!u||!u.username)return;
+      if(!u.role)u.role='operator';
+      if(u.active===undefined)u.active=true;
+      if(!map[u.username]){
+        map[u.username]=u;
+      } else {
+        const t0=map[u.username].createdAt?new Date(map[u.username].createdAt).getTime():0;
+        const t1=u.createdAt?new Date(u.createdAt).getTime():0;
+        if(t1>=t0)map[u.username]=u;
+      }
+    });
+  });
+  return Object.values(map);
+}
+
+function loadUsers(){
+  const sources=[];
+  // 1. Karbaran embedded dar file HTML
+  if(Array.isArray(EMBEDDED_USERS)&&EMBEDDED_USERS.length>0) sources.push(EMBEDDED_USERS);
+  // 2. Tamam localStorage keys
+  ALL_USER_KEYS.forEach(key=>{
+    const raw=localStorage.getItem(key);
+    if(!raw)return;
+    try{sources.push(JSON.parse(raw));}catch(e){}
+  });
+  const users=mergeUserLists(...sources);
+  if(users.length===0){
+    const def=[{id:1,name:'مدیر سیستم',username:'admin',pwdHash:hashPwd('ISP@Admin2024'),role:'admin',active:true,createdAt:new Date().toISOString()}];
+    saveUsers(def);return def;
+  }
+  saveUsers(users);
+  return users;
+}
+function saveUsers(u){
+  // Save to primary key
+  localStorage.setItem(USERS_KEY,JSON.stringify(u));
+  // Also update other keys so they stay in sync (prevents deleted users from reappearing)
+  const ids=new Set(u.map(x=>x.id));
+  ALL_USER_KEYS.slice(1).forEach(key=>{
+    const raw=localStorage.getItem(key);
+    if(!raw)return;
+    try{
+      const old=JSON.parse(raw).filter(x=>ids.has(x.id));
+      if(old.length>0) localStorage.setItem(key,JSON.stringify(old));
+      else localStorage.removeItem(key);
+    }catch(e){}
+  });
+}
+
+let currentUser=null;
+let loginFailCount=0;
+
+
+
+function doLogin(){
+  const uname=document.getElementById('loginUsername').value.trim();
+  const pwd=document.getElementById('loginPassword').value;
+  const err=document.getElementById('loginError');
+  if(!uname||!pwd){
+    err.style.display='flex';
+    document.getElementById('loginErrMsg').textContent='نام کاربری و رمز عبور را وارد کنید';
+    return;
+  }
+  const user=loadUsers().find(u=>u.username===uname&&u.pwdHash===hashPwd(pwd)&&u.active);
+  if(!user){
+    loginFailCount++;
+    err.style.display='flex';
+    document.getElementById('loginErrMsg').textContent='نام کاربری یا رمز عبور اشتباه است';
+    return;
+  }
+  err.style.display='none';
+  loginFailCount=0;
+  currentUser=user;
+  localStorage.setItem(SESSION_KEY,JSON.stringify({id:user.id}));
+  startApp();
+}
+
+function togglePwd(){
+  const i=document.getElementById('loginPassword');
+  const b=document.getElementById('pwdToggleBtn');
+  if(i.type==='password'){i.type='text';b.innerHTML='<i class="fas fa-eye-slash"></i>';}
+  else{i.type='password';b.innerHTML='<i class="fas fa-eye"></i>';}
+}
+
+function checkSession(){
+  // Try all known session keys
+  let sess=null;
+  for(const key of ALL_SESSION_KEYS){
+    const raw=localStorage.getItem(key);
+    if(raw){sess=raw;break;}
+  }
+  if(!sess)return false;
+  try{
+    const {id}=JSON.parse(sess);
+    const user=loadUsers().find(u=>u.id===id&&u.active);
+    if(!user)return false;
+    currentUser=user;
+    localStorage.setItem(SESSION_KEY,JSON.stringify({id:user.id}));
+    return true;
+  }catch(e){return false;}
+}
+
+function startApp(){
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('appPage').style.display='block';
+  document.getElementById('sidebarName').textContent=currentUser.name;
+  document.getElementById('sidebarRole').innerHTML=`<i class="fas fa-${currentUser.role==='admin'?'shield-alt':'user'}" style="color:var(--primary);font-size:9px;margin-left:4px;"></i>${currentUser.role==='admin'?'مدیر کل':'اپراتور'}`;
+  document.getElementById('sidebarAvatar').textContent=currentUser.name.charAt(0);
+  document.querySelectorAll('.admin-only').forEach(el=>{el.style.display=currentUser.role==='admin'?'flex':'none';});
+  document.getElementById('saleSeller').value=currentUser.name;
+  if(localStorage.getItem('isp_theme')==='light')applyTheme('light');
+  init();
+}
+
+function doLogout(){
+  if(!confirm('آیا از خروج مطمئن هستید؟'))return;
+  currentUser=null;
+  localStorage.removeItem(SESSION_KEY);
+  document.getElementById('appPage').style.display='none';
+  document.getElementById('loginPage').style.display='flex';
+  document.getElementById('loginUsername').value='';
+  document.getElementById('loginPassword').value='';
+}
+
+// ══════════════════════════════════════════════════════
+// STATE — per-user inventory architecture
+// ══════════════════════════════════════════════════════
+/*
+  state = {
+    packages: [{id, name, size, price}, ...],
+    nextPkgId: 8,
+
+    // Per-user inventory: { userId: { pkgId: qty, ... }, ... }
+    userInventory: {},
+
+    // Sales array
+    sales: [{id, pkgId, qty, revenue, date, userId, userName, note, seller}, ...],
+
+    // Returns
+    returns: [{pkgId, qty, date, userId, userName, note}, ...],
+
+    // Inventory change logs
+    invLogs: [{id, time, userId, userName, action, pkgId, fromUserId, toUserId, qty, adminId, adminName, note}, ...],
+
+    // Transfer logs (between users)
+    transferLogs: [{time, fromUserId, fromUserName, toUserId, toUserName, pkgId, qty, adminId, adminName, note}, ...],
+
+    // System logs
+    logs: [{time, user, action, detail}, ...],
+
+    nextLogId: 1,
+    nextSaleId: 1,
+  }
+*/
+
+let state={
+  packages:[
+    {id:1,name:'1GB',size:1,price:50},
+    {id:2,name:'2GB',size:2,price:80},
+    {id:3,name:'3GB',size:3,price:110},
+    {id:4,name:'5GB',size:5,price:150},
+    {id:5,name:'10GB',size:10,price:220},
+    {id:6,name:'15GB',size:15,price:300},
+    {id:7,name:'20GB',size:20,price:380},
+  ],
+  nextPkgId:8,
+  userInventory:{},
+  sales:[],
+  returns:[],
+  invLogs:[],
+  transferLogs:[],
+  logs:[],
+  nextLogId:1,
+  nextSaleId:1,
+};
+
+let appSettings={company:'ISP Manager',currency:'؋'};
+
+function loadState(){
+  const raw=localStorage.getItem(STATE_KEY);
+  if(raw){try{state=JSON.parse(raw);}catch(e){}}
+  if(!state.userInventory) state.userInventory={};
+  if(!state.invLogs) state.invLogs=[];
+  if(!state.transferLogs) state.transferLogs=[];
+  if(!state.nextLogId) state.nextLogId=1;
+  if(!state.nextSaleId) state.nextSaleId=1;
+  // Ensure all users have inventory entry
+  loadUsers().forEach(u=>ensureUserInv(u.id));
+}
+function saveState(){localStorage.setItem(STATE_KEY,JSON.stringify(state));}
+
+function loadSettings(){
+  // Try current key, then old keys
+  let raw=localStorage.getItem(SETTINGS_KEY);
+  if(!raw){
+    const oldKeys=['isp_settings_v3','isp_settings_v2'];
+    for(const key of oldKeys){const old=localStorage.getItem(key);if(old){raw=old;break;}}
+  }
+  if(raw)try{appSettings=JSON.parse(raw);}catch(e){}
+}
+function saveSettings(){
+  appSettings.company=document.getElementById('settingCompany').value.trim()||'ISP Manager';
+  appSettings.currency=document.getElementById('settingCurrency').value;
+  localStorage.setItem(SETTINGS_KEY,JSON.stringify(appSettings));
+  document.getElementById('sidebarCompany').textContent=appSettings.company;
+  showToast('تنظیمات ذخیره شد','success');
+  addLog('تنظیمات','تنظیمات سیستم به‌روز شد');
+}
+function renderSettings(){
+  document.getElementById('settingCompany').value=appSettings.company;
+  document.getElementById('settingCurrency').value=appSettings.currency;
+}
+
+// ── Ensure user has inventory entry ──
+function ensureUserInv(userId){
+  if(!state.userInventory[userId]) state.userInventory[userId]={};
+  state.packages.forEach(p=>{
+    if(state.userInventory[userId][p.id]===undefined) state.userInventory[userId][p.id]=0;
+  });
+}
+
+// ── Get user's inventory for a specific package ──
+function getUserInv(userId, pkgId){
+  ensureUserInv(userId);
+  return state.userInventory[userId][pkgId]||0;
+}
+
+// ── My inventory ──
+function myInv(pkgId){return getUserInv(currentUser.id,pkgId);}
+
+// ── Visible sales (admin=all, operator=own) ──
+function visibleSales(){
+  return currentUser.role==='admin'?state.sales:state.sales.filter(s=>s.userId===currentUser.id);
+}
+
+// ══════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════
+function today(){return new Date().toISOString().split('T')[0];}
+function dateStr(d){return new Date(d).toLocaleDateString('fa-AF');}
+function timeStr(t){const d=new Date(t);return d.toLocaleString('fa-AF',{hour:'2-digit',minute:'2-digit'});}
+function getPkg(id){return state.packages.find(p=>p.id==id);}
+function getUserById(id){return loadUsers().find(u=>u.id==id);}
+function cur(){return appSettings.currency||'؋';}
+
+function showToast(msg,type='success'){
+  const icons={success:'check-circle',danger:'times-circle',warning:'exclamation-triangle',info:'info-circle'};
+  const colors={success:'#10b981',danger:'#ef4444',warning:'#f59e0b',info:'#4f6ef7'};
+  const t=document.createElement('div');t.className='toast-item';
+  t.innerHTML=`<i class="fas fa-${icons[type]}" style="color:${colors[type]};font-size:17px;"></i><span>${msg}</span>`;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(()=>t.remove(),3500);
+}
+
+function addLog(action,detail){
+  state.logs.unshift({time:new Date().toISOString(),user:currentUser?currentUser.name:'سیستم',action,detail});
+  saveState();
+  const badge=document.getElementById('invLogBadge');
+  if(badge) badge.textContent=state.invLogs.length;
+  renderRecentActivity();
+}
+
+// Add inventory log entry
+function addInvLog(userId,userName,action,pkgId,qty,note,fromUserId,toUserId){
+  state.invLogs.unshift({
+    id:state.nextLogId++,
+    time:new Date().toISOString(),
+    userId,userName,action,pkgId,qty,
+    fromUserId:fromUserId||null,
+    toUserId:toUserId||null,
+    adminId:currentUser.id,
+    adminName:currentUser.name,
+    note:note||''
+  });
+  const badge=document.getElementById('invLogBadge');
+  if(badge) badge.textContent=state.invLogs.length;
+}
+
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+// ══════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════
+const pageTitles={
+  dashboard:['داشبورد','نمای کلی سیستم مدیریت'],
+  warehouse:['مدیریت انبار','افزودن و مدیریت موجودی کاربران — فقط ادمین'],
+  my_inventory:['موجودی من','وضعیت موجودی شخصی شما'],
+  inv_transfer:['انتقال بین کاربران','انتقال موجودی از یک فروشنده به دیگری — فقط ادمین'],
+  sales:['ثبت فروش','ثبت و پیگیری فروش روزانه'],
+  returns:['برگشت به انبار','برگشت موجودی از فروش به انبار شخصی'],
+  reports:['گزارش فروش','آمار و تحلیل فروش'],
+  inv_logs:['لاگ انبار','تاریخچه کامل تغییرات موجودی — فقط ادمین'],
+  logs:['لاگ سیستم','تاریخچه عملیات سیستم — فقط ادمین'],
+  users:['مدیریت کاربران','افزودن و کنترل کاربران'],
+  packages:['مدیریت بسته‌ها','افزودن و ویرایش بسته‌های اینترنت'],
+  settings:['تنظیمات','نام شرکت، واحد پول، پشتیبان'],
+  profile:['پروفایل من','اطلاعات حساب و تغییر رمز'],
+};
+const adminPages=['warehouse','inv_transfer','inv_logs','logs','users','packages','settings'];
+
+function showPage(name){
+  if(adminPages.includes(name)&&currentUser.role!=='admin'){showToast('دسترسی ندارید — فقط ادمین','danger');return;}
+  document.querySelectorAll('.page-content').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const pg=document.getElementById('page-'+name);if(pg)pg.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{if(n.getAttribute('onclick')?.includes(`'${name}'`))n.classList.add('active');});
+  const [title,sub]=pageTitles[name]||['',''];
+  document.getElementById('pageTitle').textContent=title;
+  document.getElementById('pageSubtitle').textContent=sub;
+  if(name==='dashboard')refreshDashboard();
+  if(name==='warehouse'){populateWarehouseSelects();renderAllUsersInventory();}
+  if(name==='my_inventory'){renderMyInventory();renderMyInvLogs();}
+  if(name==='inv_transfer'){populateTransferSelects();renderTransferLogs();}
+  if(name==='sales'){populatePkgSelects();renderSalesHistory();}
+  if(name==='returns'){populatePkgSelects();renderReturnsHistory();}
+  if(name==='reports')renderReports();
+  if(name==='inv_logs'){populateInvLogFilters();renderInvLogs();}
+  if(name==='logs')renderLogs();
+  if(name==='users')renderUsersList();
+  if(name==='packages')renderPackagesTable();
+  if(name==='profile')renderProfile();
+  if(name==='settings')renderSettings();
+  if(window.innerWidth<992)toggleSidebar(false);
+}
+
+function toggleSidebar(force){
+  const s=document.getElementById('sidebar'),o=document.getElementById('overlay');
+  const open=force!==undefined?force:!s.classList.contains('open');
+  s.classList.toggle('open',open);o.classList.toggle('show',open);
+}
+
+function setMobNav(el){
+  document.querySelectorAll('.mob-nav-item').forEach(n=>n.classList.remove('active'));
+  if(el) el.classList.add('active');
+}
+
+function manualRefresh(){
+  const ic=document.getElementById('refreshIcon');ic.classList.add('fa-spin');
+  setTimeout(()=>{refreshDashboard();ic.classList.remove('fa-spin');showToast('داشبورد به‌روز شد','info');},600);
+}
+
+// ══════════════════════════════════════════════════════
+// PACKAGES
+// ══════════════════════════════════════════════════════
+function addPackage(){
+  if(currentUser.role!=='admin'){showToast('فقط ادمین','danger');return;}
+  const name=document.getElementById('newPkgName').value.trim();
+  const size=parseFloat(document.getElementById('newPkgSize').value);
+  const price=parseFloat(document.getElementById('newPkgPrice').value);
+  if(!name||!size||!price){showToast('تمام فیلدها را پر کنید','warning');return;}
+  const pkg={id:state.nextPkgId++,name,size,price};
+  state.packages.push(pkg);
+  // Add pkg to all users' inventory
+  loadUsers().forEach(u=>{ensureUserInv(u.id);if(state.userInventory[u.id][pkg.id]===undefined)state.userInventory[u.id][pkg.id]=0;});
+  document.getElementById('newPkgName').value='';document.getElementById('newPkgSize').value='';document.getElementById('newPkgPrice').value='';
+  renderPackagesTable();populatePkgSelects();populateWarehouseSelects();populateTransferSelects();
+  addLog('افزودن بسته',`بسته "${name}" اضافه شد`);showToast(`بسته ${name} اضافه شد`,'success');saveState();
+}
+
+function deletePackage(id){
+  if(currentUser.role!=='admin'){showToast('فقط ادمین','danger');return;}
+  if(!confirm('حذف این بسته؟'))return;
+  state.packages=state.packages.filter(p=>p.id!==id);
+  renderPackagesTable();populatePkgSelects();saveState();showToast('بسته حذف شد','warning');
+}
+
+function renderPackagesTable(){
+  document.getElementById('packagesTableBody').innerHTML=state.packages.map((p,i)=>`
+    <tr><td>${i+1}</td><td><span class="badge-custom badge-primary"><i class="fas fa-wifi"></i> ${p.name}</span></td>
+    <td>${p.size}GB</td><td>${p.price.toLocaleString()} ${cur()}</td>
+    <td style="display:flex;gap:5px;">
+      <button class="btn-outline-custom" onclick="openEditPackage(${p.id})" style="font-size:11px;padding:4px 8px;color:var(--primary);border-color:var(--primary);"><i class="fas fa-edit"></i></button>
+      <button class="btn-outline-custom" onclick="deletePackage(${p.id})" style="font-size:11px;padding:4px 8px;color:#ef4444;border-color:#ef4444;"><i class="fas fa-trash"></i></button>
+    </td></tr>`).join('');
+}
+
+function openEditPackage(id){
+  const p=getPkg(id);if(!p)return;
+  document.getElementById('editPkgId').value=id;
+  document.getElementById('editPkgName').value=p.name;
+  document.getElementById('editPkgSize').value=p.size;
+  document.getElementById('editPkgPrice').value='';
+  document.getElementById('editPkgModal').classList.add('open');
+}
+function saveEditPackage(){
+  const id=parseInt(document.getElementById('editPkgId').value);
+  const name=document.getElementById('editPkgName').value.trim();
+  const size=parseFloat(document.getElementById('editPkgSize').value);
+  const priceRaw=document.getElementById('editPkgPrice').value.trim();
+  if(!name||!size){showToast('نام و حجم الزامی','warning');return;}
+  const p=getPkg(id);if(!p)return;
+  p.name=name;p.size=size;
+  if(priceRaw!==''){const pr=parseFloat(priceRaw);if(!isNaN(pr)&&pr>0)p.price=pr;}
+  closeModal('editPkgModal');renderPackagesTable();populatePkgSelects();populateWarehouseSelects();
+  addLog('ویرایش بسته',`بسته "${name}" ویرایش شد`);showToast(`بسته ${name} ویرایش شد`,'success');saveState();
+}
+
+function populatePkgSelects(){
+  ['salePackage','returnPackage'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    const cur2=el.value;
+    el.innerHTML=state.packages.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+    if(cur2)el.value=cur2;
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// WAREHOUSE — PER-USER INVENTORY OPERATIONS (admin only)
+// ══════════════════════════════════════════════════════
+function populateWarehouseSelects(){
+  const users=loadUsers().filter(u=>u.active);
+  const whUser=document.getElementById('whUser');
+  if(whUser){
+    const cur2=whUser.value;
+    whUser.innerHTML=users.map(u=>`<option value="${u.id}">${u.name} (@${u.username})</option>`).join('');
+    if(cur2)whUser.value=cur2;
+  }
+  const whPkg=document.getElementById('whPkg');
+  if(whPkg){
+    const cur2=whPkg.value;
+    whPkg.innerHTML=state.packages.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+    if(cur2)whPkg.value=cur2;
+  }
+}
+
+function updateWhInfo(){
+  const userId=parseInt(document.getElementById('whUser').value);
+  const pkgId=parseInt(document.getElementById('whPkg').value);
+  const op=document.getElementById('whOp').value;
+  const qty=parseInt(document.getElementById('whQty').value)||0;
+  if(!userId||!pkgId){return;}
+  const user=getUserById(userId);
+  const pkg=getPkg(pkgId);
+  const current=getUserInv(userId,pkgId);
+  const el=document.getElementById('whInfo');
+  if(op==='add'){
+    el.className='alert-custom alert-success';
+    el.innerHTML=`<i class="fas fa-plus-circle"></i> کاربر: <strong>${user?.name}</strong> | بسته: <strong>${pkg?.name}</strong> | موجودی فعلی: <strong>${current}</strong> | پس از افزودن: <strong>${current+qty}</strong>`;
+  } else {
+    const ok=current>=qty&&qty>0;
+    el.className=`alert-custom ${ok?'alert-warning':'alert-danger'}`;
+    el.innerHTML=`<i class="fas fa-${ok?'minus':'times'}-circle"></i> کاربر: <strong>${user?.name}</strong> | موجودی فعلی: <strong>${current}</strong> | پس از کاهش: <strong>${Math.max(0,current-qty)}</strong>${!ok&&qty>0?' — ⚠️ موجودی کافی نیست':''}`;
+  }
+}
+
+function doWarehouseOp(){
+  if(currentUser.role!=='admin'){showToast('فقط ادمین','danger');return;}
+  const userId=parseInt(document.getElementById('whUser').value);
+  const pkgId=parseInt(document.getElementById('whPkg').value);
+  const op=document.getElementById('whOp').value;
+  const qty=parseInt(document.getElementById('whQty').value);
+  const note=document.getElementById('whNote').value.trim();
+  if(!qty||qty<1){showToast('تعداد را وارد کنید','warning');return;}
+  const user=getUserById(userId);
+  const pkg=getPkg(pkgId);
+  ensureUserInv(userId);
+  if(op==='add'){
+    state.userInventory[userId][pkgId]=(state.userInventory[userId][pkgId]||0)+qty;
+    addInvLog(userId,user?.name,'افزودن',pkgId,qty,note);
+    addLog('ورود انبار',`+${qty} عدد ${pkg?.name} به انبار ${user?.name} توسط ${currentUser.name}`);
+    showToast(`${qty} عدد ${pkg?.name} به انبار ${user?.name} اضافه شد`,'success');
+  } else {
+    const current=state.userInventory[userId][pkgId]||0;
+    if(current<qty){showToast(`موجودی ${user?.name} کافی نیست (فعلاً ${current} عدد)`,'danger');return;}
+    state.userInventory[userId][pkgId]-=qty;
+    addInvLog(userId,user?.name,'کاهش',pkgId,qty,note);
+    addLog('خروج انبار',`-${qty} عدد ${pkg?.name} از انبار ${user?.name} توسط ${currentUser.name}`);
+    showToast(`${qty} عدد ${pkg?.name} از انبار ${user?.name} کاهش یافت`,'warning');
+  }
+  document.getElementById('whQty').value='';document.getElementById('whNote').value='';
+  updateWhInfo();
+  renderAllUsersInventory();
+  // Immediately refresh dashboard stats and my inventory if visible
+  refreshDashboard();
+  if(document.getElementById('page-my_inventory')?.classList.contains('active')){
+    renderMyInventory();renderMyInvLogs();
+  }
+  saveState();
+}
+
+// ── Render all users inventory (admin panel) ──
+function renderAllUsersInventory(){
+  const search=(document.getElementById('whSearchUser')?.value||'').toLowerCase();
+  const users=loadUsers().filter(u=>u.active&&(!search||u.name.toLowerCase().includes(search)||u.username.toLowerCase().includes(search)));
+  const container=document.getElementById('allUsersInventory');
+  if(!users.length){container.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:20px;">کاربری یافت نشد</div>';return;}
+  container.innerHTML=users.map(u=>{
+    ensureUserInv(u.id);
+    const inv=state.userInventory[u.id];
+    const total=Object.values(inv).reduce((a,v)=>a+v,0);
+    const pkgsHtml=state.packages.map(p=>{
+      const qty=inv[p.id]||0;
+      const color=qty===0?'#ef4444':qty<5?'#f59e0b':'#10b981';
+      return `<div class="inv-pkg-card" style="border-color:${qty>0?'rgba(79,110,247,.2)':'rgba(239,68,68,.15)'};">
+        <div class="pkg-name">${p.name}</div>
+        <div class="pkg-qty" style="color:${color};">${qty}</div>
+        <div class="pkg-label">عدد</div>
+      </div>`;
+    }).join('');
+    return `<div class="user-card" style="flex-direction:column;align-items:flex-start;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;width:100%;gap:10px;margin-bottom:10px;">
+        <div class="user-card-avatar" style="background:linear-gradient(135deg,${u.role==='admin'?'#4f6ef7,#7c3aed':'#10b981,#059669'});width:38px;height:38px;font-size:14px;">${u.name.charAt(0)}</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:700;">${u.name} ${u.id===currentUser.id?'<span class="badge-custom badge-primary" style="font-size:10px;">شما</span>':''}</div>
+          <div style="font-size:11px;color:var(--text-muted);">@${u.username} · ${u.role==='admin'?'مدیر کل':'اپراتور'} · مجموع: ${total} عدد</div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn-outline-custom" onclick="openViewUserInv(${u.id})" style="font-size:11px;padding:5px 10px;color:var(--accent);border-color:var(--accent);" title="مشاهده جزئیات"><i class="fas fa-eye"></i></button>
+        </div>
+      </div>
+      <div class="inv-grid" style="width:100%;">${pkgsHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── My inventory page ──
+function renderMyInventory(){
+  ensureUserInv(currentUser.id);
+  const inv=state.userInventory[currentUser.id];
+  const total=Object.values(inv).reduce((a,v)=>a+v,0);
+  document.getElementById('myInvTotal').textContent=`مجموع: ${total} عدد`;
+  document.getElementById('myInvGrid').innerHTML=state.packages.map(p=>{
+    const qty=inv[p.id]||0;
+    const color=qty===0?'#ef4444':qty<5?'#f59e0b':'#10b981';
+    return `<div class="inv-pkg-card">
+      <div class="pkg-name"><i class="fas fa-wifi" style="color:var(--primary);font-size:9px;margin-left:4px;"></i>${p.name}</div>
+      <div class="pkg-qty" style="color:${color};">${qty}</div>
+      <div class="pkg-label">عدد موجود</div>
+    </div>`;
+  }).join('');
+}
+
+function renderMyInvLogs(){
+  const myLogs=state.invLogs.filter(l=>l.userId===currentUser.id);
+  const tbody=document.getElementById('myInvLogsBody');
+  if(!myLogs.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">تاریخچه‌ای ثبت نشده</td></tr>';return;}
+  const actionColor={افزودن:'success',کاهش:'danger','انتقال دریافت':'cyan','انتقال ارسال':'warning'};
+  tbody.innerHTML=myLogs.map(l=>{
+    const pkg=getPkg(l.pkgId);
+    const isOut=l.action==='کاهش'||l.action==='انتقال ارسال';
+    const d=new Date(l.time);
+    return `<tr>
+      <td style="font-size:11px;">${d.toLocaleDateString('fa-AF')} <span style="color:var(--text-muted);">${d.toLocaleTimeString('fa-AF',{hour:'2-digit',minute:'2-digit'})}</span></td>
+      <td><span class="badge-custom badge-primary">${pkg?.name||'-'}</span></td>
+      <td><span class="badge-custom badge-${actionColor[l.action]||'primary'}">${l.action}</span></td>
+      <td><strong style="color:${isOut?'#f87171':'#34d399'}">${isOut?'-':'+'}${l.qty}</strong></td>
+      <td style="font-size:11px;">${l.note||'-'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── View user inventory modal ──
+function openViewUserInv(userId){
+  const user=getUserById(userId);
+  document.getElementById('viewUserInvTitle').textContent=`موجودی ${user?.name}`;
+  ensureUserInv(userId);
+  const inv=state.userInventory[userId];
+  document.getElementById('viewUserInvGrid').innerHTML=state.packages.map(p=>{
+    const qty=inv[p.id]||0;
+    const color=qty===0?'#ef4444':qty<5?'#f59e0b':'#10b981';
+    return `<div class="inv-pkg-card"><div class="pkg-name">${p.name}</div><div class="pkg-qty" style="color:${color};">${qty}</div><div class="pkg-label">عدد</div></div>`;
+  }).join('');
+  const logs=state.invLogs.filter(l=>l.userId===userId).slice(0,10);
+  const tbody=document.getElementById('viewUserInvLogsBody');
+  if(!logs.length){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">-</td></tr>';}
+  else{
+    tbody.innerHTML=logs.map(l=>{
+      const pkg=getPkg(l.pkgId);
+      const isOut=l.action==='کاهش'||l.action==='انتقال ارسال';
+      return `<tr><td style="font-size:11px;">${dateStr(l.time)}</td><td><span class="badge-custom badge-primary" style="font-size:10px;">${pkg?.name||'-'}</span></td><td><span class="badge-custom" style="font-size:10px;">${l.action}</span></td><td><strong style="color:${isOut?'#f87171':'#34d399'};font-size:12px;">${isOut?'-':'+'}${l.qty}</strong></td></tr>`;
+    }).join('');
+  }
+  document.getElementById('viewUserInvModal').classList.add('open');
+}
+
+// ══════════════════════════════════════════════════════
+// TRANSFER BETWEEN USERS (admin only)
+// ══════════════════════════════════════════════════════
+function populateTransferSelects(){
+  const users=loadUsers().filter(u=>u.active);
+  ['trFrom','trTo'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.innerHTML=users.map(u=>`<option value="${u.id}">${u.name} (@${u.username})</option>`).join('');
+  });
+  const trPkg=document.getElementById('trPkg');
+  if(trPkg) trPkg.innerHTML=state.packages.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+}
+
+function updateTrInfo(){
+  const fromId=parseInt(document.getElementById('trFrom').value);
+  const toId=parseInt(document.getElementById('trTo').value);
+  const pkgId=parseInt(document.getElementById('trPkg').value);
+  const qty=parseInt(document.getElementById('trQty').value)||0;
+  const fromUser=getUserById(fromId);const toUser=getUserById(toId);const pkg=getPkg(pkgId);
+  const fromQty=getUserInv(fromId,pkgId);
+  const el=document.getElementById('trInfo');
+  if(fromId===toId){el.className='alert-custom alert-danger';el.innerHTML='<i class="fas fa-times-circle"></i> کاربر مبدا و مقصد نمی‌توانند یکی باشند';return;}
+  const ok=fromQty>=qty&&qty>0;
+  el.className=`alert-custom ${ok?'alert-success':'alert-danger'}`;
+  el.innerHTML=`<i class="fas fa-${ok?'check':'times'}-circle"></i> از: <strong>${fromUser?.name}</strong> (${fromQty} عدد) → به: <strong>${toUser?.name}</strong> | بسته: <strong>${pkg?.name}</strong> | تعداد: <strong>${qty}</strong>${!ok&&qty>0?' — ⚠️ موجودی کافی نیست':''}`;
+}
+
+function doTransferBetweenUsers(){
+  if(currentUser.role!=='admin'){showToast('فقط ادمین','danger');return;}
+  const fromId=parseInt(document.getElementById('trFrom').value);
+  const toId=parseInt(document.getElementById('trTo').value);
+  const pkgId=parseInt(document.getElementById('trPkg').value);
+  const qty=parseInt(document.getElementById('trQty').value);
+  const note=document.getElementById('trNote').value.trim();
+  if(fromId===toId){showToast('کاربر مبدا و مقصد نمی‌توانند یکی باشند','danger');return;}
+  if(!qty||qty<1){showToast('تعداد را وارد کنید','warning');return;}
+  const fromUser=getUserById(fromId);const toUser=getUserById(toId);const pkg=getPkg(pkgId);
+  ensureUserInv(fromId);ensureUserInv(toId);
+  const fromQty=state.userInventory[fromId][pkgId]||0;
+  if(fromQty<qty){showToast(`موجودی ${fromUser?.name} کافی نیست (${fromQty} عدد)`,'danger');return;}
+  state.userInventory[fromId][pkgId]-=qty;
+  state.userInventory[toId][pkgId]=(state.userInventory[toId][pkgId]||0)+qty;
+  // Log for from-user
+  addInvLog(fromId,fromUser?.name,'انتقال ارسال',pkgId,qty,note,fromId,toId);
+  // Log for to-user
+  addInvLog(toId,toUser?.name,'انتقال دریافت',pkgId,qty,note,fromId,toId);
+  // Transfer log
+  state.transferLogs.unshift({time:new Date().toISOString(),fromUserId:fromId,fromUserName:fromUser?.name,toUserId:toId,toUserName:toUser?.name,pkgId,qty,adminId:currentUser.id,adminName:currentUser.name,note});
+  document.getElementById('trQty').value='';document.getElementById('trNote').value='';
+  updateTrInfo();renderTransferLogs();
+  addLog('انتقال انبار',`${qty} عدد ${pkg?.name} از ${fromUser?.name} به ${toUser?.name} توسط ${currentUser.name}`);
+  showToast(`${qty} عدد ${pkg?.name} از ${fromUser?.name} به ${toUser?.name} منتقل شد`,'success');
+  saveState();
+}
+
+function renderTransferLogs(){
+  const tbody=document.getElementById('transferLogsBody');
+  if(!state.transferLogs.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text-muted);">انتقالی ثبت نشده</td></tr>';return;}
+  tbody.innerHTML=state.transferLogs.map(t=>{
+    const pkg=getPkg(t.pkgId);
+    return `<tr>
+      <td style="font-size:11px;">${dateStr(t.time)} ${timeStr(t.time)}</td>
+      <td><span class="badge-custom badge-danger" style="font-size:10px;">${t.fromUserName||'-'}</span></td>
+      <td><span class="badge-custom badge-success" style="font-size:10px;">${t.toUserName||'-'}</span></td>
+      <td><span class="badge-custom badge-primary">${pkg?.name||'-'}</span></td>
+      <td><strong style="color:#34d399;">${t.qty}</strong></td>
+      <td style="font-size:11px;">${t.adminName||'-'}</td>
+      <td style="font-size:11px;">${t.note||'-'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// SALES
+// ══════════════════════════════════════════════════════
+let salesFilter='all';
+function setSalesFilter(f){salesFilter=f;renderSalesHistory();}
+
+function updateSaleInfo(){
+  const pkgId=parseInt(document.getElementById('salePackage').value);
+  const qty=parseInt(document.getElementById('saleQty').value)||0;
+  const pkg=getPkg(pkgId);
+  const myStock=myInv(pkgId);
+  const el=document.getElementById('saleInfo');
+  const ok=qty>0&&myStock>=qty;
+  el.className=`alert-custom ${qty===0?'alert-info':ok?'alert-success':'alert-danger'}`;
+  el.innerHTML=qty>0
+    ?`<i class="fas fa-${ok?'check':'times'}-circle"></i> موجودی من: <strong>${myStock}</strong> | مبلغ: <strong>${(qty*(pkg?.price||0)).toLocaleString()} ${cur()}</strong> | پس از فروش: <strong>${myStock-qty}</strong>`
+    :`<i class="fas fa-info-circle"></i> موجودی من: ${myStock} عدد — قیمت: ${pkg?.price||0} ${cur()}`;
+}
+
+function doSale(){
+  const pkgId=parseInt(document.getElementById('salePackage').value);
+  const qty=parseInt(document.getElementById('saleQty').value);
+  const date=document.getElementById('saleDate').value||today();
+  const seller=document.getElementById('saleSeller').value.trim()||currentUser.name;
+  const note=document.getElementById('saleNote').value.trim();
+  if(!qty||qty<1){showToast('تعداد را وارد کنید','warning');return;}
+  ensureUserInv(currentUser.id);
+  const myStock=myInv(pkgId);
+  if(myStock<qty){showToast(`موجودی شما کافی نیست (${myStock} عدد)`,'danger');return;}
+  const pkg=getPkg(pkgId);
+  state.userInventory[currentUser.id][pkgId]-=qty;
+  const revenue=qty*(pkg?.price||0);
+  state.sales.push({id:state.nextSaleId++,pkgId,qty,revenue,date,userId:currentUser.id,userName:currentUser.name,seller,note});
+  // Inventory log (sale reduces stock)
+  addInvLog(currentUser.id,currentUser.name,'فروش',pkgId,qty,`فروش به: ${seller}`);
+  document.getElementById('saleQty').value='';document.getElementById('saleNote').value='';
+  updateSaleInfo();renderSalesHistory();refreshDashboard();
+  addLog('ثبت فروش',`${qty} عدد ${pkg?.name} توسط ${currentUser.name}`);
+  showToast(`${qty} عدد ${pkg?.name} فروخته شد`,'success');
+  if(myInv(pkgId)===0) showToast(`⚠️ موجودی ${pkg?.name} شما به صفر رسید!`,'danger');
+  saveState();
+}
+
+function renderSalesHistory(){
+  const search=(document.getElementById('salesSearch')?.value||'').toLowerCase();
+  const now=new Date();const t=today();
+  let list=visibleSales().filter(s=>{
+    if(salesFilter==='today')return s.date===t;
+    if(salesFilter==='week'){const w=new Date();w.setDate(w.getDate()-7);return new Date(s.date)>=w;}
+    return true;
+  }).filter(s=>{
+    if(!search)return true;
+    const pkg=getPkg(s.pkgId);
+    return (pkg?.name||'').includes(search)||(s.seller||'').includes(search)||(s.userName||'').includes(search);
+  });
+  const isAdmin=currentUser.role==='admin';
+  const tbody=document.getElementById('salesHistoryBody');
+  if(!list.length){tbody.innerHTML=`<tr><td colspan="${isAdmin?7:6}" style="text-align:center;color:var(--text-muted);">فروشی ثبت نشده</td></tr>`;return;}
+  tbody.innerHTML=[...list].reverse().map(s=>{
+    const pkg=getPkg(s.pkgId);
+    const realIdx=state.sales.findIndex(x=>x.id===s.id);
+    return `<tr>
+      <td style="font-size:11px;">${dateStr(s.date)}</td>
+      <td><span class="badge-custom badge-primary">${pkg?.name||'-'}</span></td>
+      <td><span class="badge-custom badge-success">${s.qty}</span></td>
+      <td>${s.revenue?(s.revenue.toLocaleString()+' '+cur()):'-'}</td>
+      <td><span class="badge-custom badge-cyan" style="font-size:10px;">${s.seller||s.userName||'-'}</span></td>
+      <td style="font-size:11px;">${s.note||'-'}</td>
+      ${isAdmin?`<td style="display:flex;gap:5px;">
+        <button class="btn-outline-custom" onclick="openEditSale(${realIdx})" style="font-size:10px;padding:3px 7px;color:var(--primary);border-color:var(--primary);"><i class="fas fa-edit"></i></button>
+        <button class="btn-outline-custom" onclick="deleteSale(${realIdx})" style="font-size:10px;padding:3px 7px;color:#ef4444;border-color:#ef4444;"><i class="fas fa-trash"></i></button>
+      </td>`:''}
+    </tr>`;
+  }).join('');
+}
+
+function populateEditSalePkgSelect(){
+  const el=document.getElementById('editSalePkg');if(!el)return;
+  el.innerHTML=state.packages.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+}
+function openEditSale(idx){
+  if(currentUser.role!=='admin'){showToast('فقط ادمین','danger');return;}
+  const s=state.sales[idx];if(!s)return;
+  populateEditSalePkgSelect();
+  document.getElementById('editSaleIdx').value=idx;
+  document.getElementById('editSalePkg').value=s.pkgId;
+  document.getElementById('editSaleQty').value=s.qty;
+  document.getElementById('editSaleSeller').value=s.seller||s.userName;
+  document.getElementById('editSaleDate').value=s.date;
+  document.getElementById('editSaleNote').value=s.note||'';
+  document.getElementById('editSaleModal').classList.add('open');
+}
+function saveEditSale(){
+  const idx=parseInt(document.getElementById('editSaleIdx').value);
+  const s=state.sales[idx];if(!s)return;
+  const newPkgId=parseInt(document.getElementById('editSalePkg').value);
+  const newQty=parseInt(document.getElementById('editSaleQty').value);
+  if(!newQty||newQty<1){showToast('تعداد الزامی','warning');return;}
+  const oldUserId=s.userId;
+  // Restore old pkg stock to original user
+  ensureUserInv(oldUserId);
+  state.userInventory[oldUserId][s.pkgId]=(state.userInventory[oldUserId][s.pkgId]||0)+s.qty;
+  // Check new stock
+  const newStock=getUserInv(oldUserId,newPkgId);
+  if(newStock<newQty){
+    state.userInventory[oldUserId][s.pkgId]-=s.qty;
+    showToast('موجودی کافی نیست','danger');return;
+  }
+  state.userInventory[oldUserId][newPkgId]-=newQty;
+  const newPkg=getPkg(newPkgId);
+  s.pkgId=newPkgId;s.qty=newQty;s.seller=document.getElementById('editSaleSeller').value.trim()||s.seller;
+  s.date=document.getElementById('editSaleDate').value||s.date;s.note=document.getElementById('editSaleNote').value.trim();
+  s.revenue=newQty*(newPkg?.price||0);
+  closeModal('editSaleModal');renderSalesHistory();refreshDashboard();saveState();
+  addLog('ویرایش فروش',`فروش ویرایش شد توسط ${currentUser.name}`);showToast('فروش ویرایش شد','success');
+}
+function deleteSale(idx){
+  if(currentUser.role!=='admin'){showToast('فقط ادمین','danger');return;}
+  if(!confirm('حذف این فروش و بازگردانی موجودی؟'))return;
+  const s=state.sales[idx];if(!s)return;
+  ensureUserInv(s.userId);
+  state.userInventory[s.userId][s.pkgId]=(state.userInventory[s.userId][s.pkgId]||0)+s.qty;
+  state.sales.splice(idx,1);
+  renderSalesHistory();refreshDashboard();saveState();
+  addLog('حذف فروش',`فروش حذف و موجودی بازگردانی شد توسط ${currentUser.name}`);showToast('فروش حذف شد','warning');
+}
+
+// ══════════════════════════════════════════════════════
+// RETURNS — user returns stock to their own inventory
+// ══════════════════════════════════════════════════════
+function updateReturnInfo(){
+  const pkgId=parseInt(document.getElementById('returnPackage').value);
+  const qty=parseInt(document.getElementById('returnQty').value)||0;
+  const pkg=getPkg(pkgId);
+  const myStock=myInv(pkgId);
+  const el=document.getElementById('returnInfo');
+  el.className=`alert-custom ${qty>0?'alert-success':'alert-warning'}`;
+  el.innerHTML=qty>0
+    ?`<i class="fas fa-undo"></i> بسته: <strong>${pkg?.name}</strong> | موجودی فعلی: <strong>${myStock}</strong> | پس از برگشت: <strong>${myStock+qty}</strong>`
+    :`<i class="fas fa-info-circle"></i> موجودی فعلی: ${myStock} عدد`;
+}
+
+function doReturn(){
+  const pkgId=parseInt(document.getElementById('returnPackage').value);
+  const qty=parseInt(document.getElementById('returnQty').value);
+  const date=document.getElementById('returnDate').value||today();
+  const note=document.getElementById('returnNote').value.trim();
+  if(!qty||qty<1){showToast('تعداد را وارد کنید','warning');return;}
+  ensureUserInv(currentUser.id);
+  state.userInventory[currentUser.id][pkgId]=(state.userInventory[currentUser.id][pkgId]||0)+qty;
+  state.returns.unshift({pkgId,qty,date,time:new Date().toISOString(),userId:currentUser.id,userName:currentUser.name,note});
+  addInvLog(currentUser.id,currentUser.name,'برگشت',pkgId,qty,note);
+  const pkg=getPkg(pkgId);
+  document.getElementById('returnQty').value='';document.getElementById('returnNote').value='';
+  updateReturnInfo();renderReturnsHistory();
+  addLog('برگشت به انبار',`${qty} عدد ${pkg?.name} به انبار ${currentUser.name} برگشت`);
+  showToast(`${qty} عدد ${pkg?.name} به انبار شما برگشت`,'warning');saveState();
+}
+
+function renderReturnsHistory(){
+  const list=currentUser.role==='admin'?state.returns:state.returns.filter(r=>r.userId===currentUser.id);
+  const tbody=document.getElementById('returnsHistoryBody');
+  if(!list.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">برگشتی ثبت نشده</td></tr>';return;}
+  tbody.innerHTML=list.map(r=>{
+    const pkg=getPkg(r.pkgId);
+    return `<tr>
+      <td style="font-size:11px;">${dateStr(r.date)}</td>
+      <td><span class="badge-custom badge-primary">${pkg?.name||'-'}</span></td>
+      <td><span class="badge-custom badge-warning">${r.qty}</span></td>
+      <td><span class="badge-custom badge-cyan" style="font-size:10px;"><i class="fas fa-user" style="font-size:9px;"></i> ${r.userName||'-'}</span></td>
+      <td style="font-size:11px;">${r.note||'-'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// INVENTORY LOGS (admin)
+// ══════════════════════════════════════════════════════
+function populateInvLogFilters(){
+  const users=loadUsers();
+  const uSel=document.getElementById('invLogFilterUser');
+  if(uSel){uSel.innerHTML='<option value="">همه کاربران</option>'+users.map(u=>`<option value="${u.id}">${u.name}</option>`).join('');}
+  const pSel=document.getElementById('invLogFilterPkg');
+  if(pSel){pSel.innerHTML='<option value="">همه بسته‌ها</option>'+state.packages.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');}
+}
+
+function renderInvLogs(){
+  const filterUser=document.getElementById('invLogFilterUser')?.value;
+  const filterPkg=document.getElementById('invLogFilterPkg')?.value;
+  let logs=state.invLogs;
+  if(filterUser)logs=logs.filter(l=>l.userId==filterUser);
+  if(filterPkg)logs=logs.filter(l=>l.pkgId==filterPkg);
+  const tbody=document.getElementById('invLogsBody');
+  if(!logs.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text-muted);">لاگی ثبت نشده</td></tr>';return;}
+  const actionColor={افزودن:'success',کاهش:'danger','انتقال دریافت':'cyan','انتقال ارسال':'warning',فروش:'primary',برگشت:'warning'};
+  tbody.innerHTML=logs.map(l=>{
+    const pkg=getPkg(l.pkgId);
+    const d=new Date(l.time);
+    const isOut=l.action==='کاهش'||l.action==='انتقال ارسال'||l.action==='فروش';
+    return `<tr>
+      <td style="font-size:11px;">${d.toLocaleDateString('fa-AF')} ${d.toLocaleTimeString('fa-AF',{hour:'2-digit',minute:'2-digit'})}</td>
+      <td><span class="badge-custom badge-cyan" style="font-size:10px;">${l.userName||'-'}</span></td>
+      <td><span class="badge-custom badge-${actionColor[l.action]||'primary'}" style="font-size:10px;">${l.action}</span></td>
+      <td><span class="badge-custom badge-primary" style="font-size:10px;">${pkg?.name||'-'}</span></td>
+      <td><strong style="color:${isOut?'#f87171':'#34d399'};">${isOut?'-':'+'}${l.qty}</strong></td>
+      <td style="font-size:11px;">${l.adminName||'-'}</td>
+      <td style="font-size:11px;">${l.note||'-'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════
+let dailyChart,pieChart,reportChart;
+
+function refreshDashboard(){
+  const t=today();const now=new Date();
+  const mySales=visibleSales();
+  const todayQty=mySales.filter(s=>s.date===t).reduce((a,s)=>a+s.qty,0);
+  const monthQty=mySales.filter(s=>{const d=new Date(s.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((a,s)=>a+s.qty,0);
+  const totalRev=mySales.reduce((a,s)=>a+(s.revenue||0),0);
+  const pkgSales={};mySales.forEach(s=>{pkgSales[s.pkgId]=(pkgSales[s.pkgId]||0)+s.qty;});
+  let bestPkg='-';if(Object.keys(pkgSales).length>0){const bi=Object.keys(pkgSales).reduce((a,b)=>pkgSales[a]>pkgSales[b]?a:b);bestPkg=getPkg(parseInt(bi))?.name||'-';}
+
+  // My inventory totals
+  ensureUserInv(currentUser.id);
+  const myInvTotal=Object.values(state.userInventory[currentUser.id]).reduce((a,v)=>a+v,0);
+  const myLowStock=state.packages.filter(p=>(state.userInventory[currentUser.id]?.[p.id]||0)<3).length;
+
+  // Admin extra: total across all users
+  let allUsersTotal=0;
+  if(currentUser.role==='admin'){
+    loadUsers().forEach(u=>{ensureUserInv(u.id);allUsersTotal+=Object.values(state.userInventory[u.id]).reduce((a,v)=>a+v,0);});
+  }
+
+  const stats=[
+    {icon:'fa-shopping-cart',color:'var(--primary)',bg:'rgba(79,110,247,.15)',val:todayQty,label:'فروش امروز'},
+    {icon:'fa-calendar-alt',color:'var(--secondary)',bg:'rgba(124,58,237,.15)',val:monthQty,label:'فروش ماه جاری'},
+    {icon:'fa-boxes',color:'var(--accent)',bg:'rgba(6,182,212,.15)',val:myInvTotal,label:'موجودی انبار من'},
+    {icon:'fa-coins',color:'var(--success)',bg:'rgba(16,185,129,.15)',val:totalRev.toLocaleString(),label:`درآمد کل (${cur()})`},
+    {icon:'fa-star',color:'var(--warning)',bg:'rgba(245,158,11,.15)',val:bestPkg,label:'پرفروش‌ترین بسته'},
+    {icon:'fa-exclamation-triangle',color:'var(--danger)',bg:'rgba(239,68,68,.15)',val:myLowStock,label:'بسته‌های کم موجود'},
+  ];
+  if(currentUser.role==='admin') stats.push({icon:'fa-warehouse',color:'#06b6d4',bg:'rgba(6,182,212,.15)',val:allUsersTotal,label:'مجموع موجودی همه کاربران'});
+
+  document.getElementById('dashStats').innerHTML=stats.map(s=>`
+    <div class="stat-card" style="--card-color:${s.color};">
+      <div class="stat-icon" style="background:${s.bg};color:${s.color};"><i class="fas ${s.icon}"></i></div>
+      <div class="stat-value">${s.val}</div>
+      <div class="stat-label">${s.label}</div>
+    </div>`).join('');
+
+  renderSmartTable();renderDailyChart();renderPieChart();renderRecentActivity();
+}
+
+function renderSmartTable(){
+  const dateVal=document.getElementById('smartTableDate')?.value||today();
+  const tbody=document.getElementById('smartTableBody');
+  const now=new Date();
+  ensureUserInv(currentUser.id);
+  tbody.innerHTML=state.packages.map(p=>{
+    const myQty=state.userInventory[currentUser.id]?.[p.id]||0;
+    const daySale=visibleSales().filter(s=>s.date===dateVal&&s.pkgId===p.id).reduce((a,s)=>a+s.qty,0);
+    const monthSale=visibleSales().filter(s=>{const d=new Date(s.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()&&s.pkgId===p.id;}).reduce((a,s)=>a+s.qty,0);
+    const status=myQty===0?'<span class="badge-custom badge-danger">ناموجود</span>':myQty<3?'<span class="badge-custom badge-warning">کم موجود</span>':'<span class="badge-custom badge-success">موجود</span>';
+    return `<tr>
+      <td><span class="badge-custom badge-primary"><i class="fas fa-wifi" style="font-size:9px;"></i> ${p.name}</span></td>
+      <td><strong style="color:${myQty===0?'#f87171':myQty<3?'#fbbf24':'#34d399'};">${myQty}</strong></td>
+      <td>${daySale>0?`<span class="badge-custom badge-success">${daySale}</span>`:'-'}</td>
+      <td>${monthSale>0?`<span class="badge-custom badge-purple">${monthSale}</span>`:'-'}</td>
+      <td>${status}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderRecentActivity(){
+  const el=document.getElementById('recentActivity');if(!el)return;
+  const colors={ثبت_فروش:'#10b981',برگشت:'#f59e0b',افزودن_انبار:'#06b6d4',انتقال:'#7c3aed',فروش:'#4f6ef7'};
+  const logs=state.logs.slice(0,6);
+  if(!logs.length){el.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:16px 0;font-size:12px;">هنوز فعالیتی ثبت نشده</div>';return;}
+  el.innerHTML=logs.map(l=>{
+    const d=new Date(l.time);
+    const color='#4f6ef7';
+    return `<div class="activity-item">
+      <div class="activity-dot" style="background:${color};"></div>
+      <div><div class="activity-text"><strong>${l.action}</strong> — ${l.detail}</div>
+      <div class="activity-time">${d.toLocaleTimeString('fa-AF',{hour:'2-digit',minute:'2-digit'})}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderDailyChart(){
+  const ctx=document.getElementById('dailySalesChart');if(!ctx)return;
+  const labels=[],data=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const ds=d.toISOString().split('T')[0];
+    labels.push(d.toLocaleDateString('fa-AF',{month:'short',day:'numeric'}));
+    data.push(visibleSales().filter(s=>s.date===ds).reduce((a,s)=>a+s.qty,0));
+  }
+  if(dailyChart)dailyChart.destroy();
+  dailyChart=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'فروش روزانه',data,borderColor:'#4f6ef7',backgroundColor:'rgba(79,110,247,.1)',fill:true,tension:.4,pointBackgroundColor:'#4f6ef7',pointRadius:4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#94a3b8',font:{family:'Vazirmatn'}}},y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#94a3b8',font:{family:'Vazirmatn'}},beginAtZero:true}}}});
+}
+
+function renderPieChart(){
+  const ctx=document.getElementById('packagePieChart');if(!ctx)return;
+  const pkgSales=state.packages.map(p=>visibleSales().filter(s=>s.pkgId===p.id).reduce((a,s)=>a+s.qty,0));
+  const total=pkgSales.reduce((a,v)=>a+v,0);
+  if(pieChart)pieChart.destroy();
+  pieChart=new Chart(ctx,{type:'doughnut',data:{labels:state.packages.map(p=>p.name),datasets:[{data:total>0?pkgSales:state.packages.map(()=>1),backgroundColor:['#4f6ef7','#7c3aed','#06b6d4','#10b981','#f59e0b','#ef4444','#ec4899'],borderWidth:2,borderColor:'#0a0f1e'}]},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',font:{family:'Vazirmatn',size:10},padding:8}}},cutout:'65%'}});
+}
+
+// ══════════════════════════════════════════════════════
+// REPORTS
+// ══════════════════════════════════════════════════════
+let currentReportPeriod='daily';
+function setReportPeriod(period,btn){
+  currentReportPeriod=period;
+  document.querySelectorAll('.report-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderReports();
+}
+
+function renderReports(){
+  const now=new Date();const t=today();
+  const allS=visibleSales();
+  let sales=allS;
+  if(currentReportPeriod==='daily')sales=allS.filter(s=>s.date===t);
+  else if(currentReportPeriod==='weekly'){const w=new Date();w.setDate(w.getDate()-7);sales=allS.filter(s=>new Date(s.date)>=w);}
+  else if(currentReportPeriod==='monthly')sales=allS.filter(s=>{const d=new Date(s.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
+  const totalQty=sales.reduce((a,s)=>a+s.qty,0);
+  const revenue=sales.reduce((a,s)=>a+(s.revenue||0),0);
+  const pkgSales={};sales.forEach(s=>{pkgSales[s.pkgId]=(pkgSales[s.pkgId]||0)+s.qty;});
+  let bestId=null;if(Object.keys(pkgSales).length>0)bestId=Object.keys(pkgSales).reduce((a,b)=>pkgSales[a]>pkgSales[b]?a:b);
+  document.getElementById('rpt-qty').textContent=totalQty;
+  document.getElementById('rpt-rev').textContent=revenue.toLocaleString();
+  document.getElementById('rpt-best').textContent=bestId?(getPkg(parseInt(bestId))?.name||'-'):'-';
+  const ctx=document.getElementById('reportBarChart');if(!ctx)return;
+  if(reportChart)reportChart.destroy();
+  reportChart=new Chart(ctx,{type:'bar',data:{labels:state.packages.map(p=>p.name),datasets:[{label:'فروش',data:state.packages.map(p=>pkgSales[p.id]||0),backgroundColor:['#4f6ef7','#7c3aed','#06b6d4','#10b981','#f59e0b','#ef4444','#ec4899'],borderRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#94a3b8',font:{family:'Vazirmatn'}}},y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#94a3b8',font:{family:'Vazirmatn'}},beginAtZero:true}}}});
+  document.getElementById('reportTableBody').innerHTML=state.packages.map(p=>{
+    const qty=pkgSales[p.id]||0;const rev=qty*(p.price||0);const pct=totalQty>0?Math.round((qty/totalQty)*100):0;
+    return `<tr><td><span class="badge-custom badge-primary">${p.name}</span></td><td>${qty}</td><td>${rev.toLocaleString()} ${cur()}</td>
+      <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;background:rgba(255,255,255,.05);border-radius:20px;height:5px;overflow:hidden;"><div style="height:100%;border-radius:20px;background:var(--primary);width:${pct}%;"></div></div><span style="font-size:10px;color:var(--text-muted);">${pct}%</span></div></td>
+      <td>${qty===0?'<span class="badge-custom badge-danger">بدون فروش</span>':qty>=10?'<span class="badge-custom badge-success">عالی</span>':'<span class="badge-custom badge-warning">معمولی</span>'}</td></tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// SYSTEM LOGS
+// ══════════════════════════════════════════════════════
+function renderLogs(){
+  const tbody=document.getElementById('logsTableBody');if(!tbody)return;
+  if(!state.logs.length){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">لاگی ثبت نشده</td></tr>';return;}
+  const colors={'ثبت فروش':'success','ورود انبار':'cyan','خروج انبار':'warning','انتقال انبار':'purple','برگشت به انبار':'warning','افزودن بسته':'purple','افزودن کاربر':'success','حذف فروش':'danger','ویرایش فروش':'primary','تنظیمات':'primary'};
+  tbody.innerHTML=state.logs.map(l=>{
+    const d=new Date(l.time);
+    return `<tr>
+      <td style="font-size:11px;">${d.toLocaleString('fa-AF')}</td>
+      <td><span class="badge-custom badge-cyan" style="font-size:10px;">${l.user}</span></td>
+      <td><span class="badge-custom badge-${colors[l.action]||'primary'}" style="font-size:10px;">${l.action}</span></td>
+      <td style="font-size:11px;">${l.detail}</td>
+    </tr>`;
+  }).join('');
+}
+function clearLogs(){if(!confirm('پاک کردن همه لاگ‌ها؟'))return;state.logs=[];saveState();renderLogs();}
+
+// ══════════════════════════════════════════════════════
+// USER MANAGEMENT
+// ══════════════════════════════════════════════════════
+function addUser(){
+  const name=document.getElementById('newUserName').value.trim();
+  const username=document.getElementById('newUserUsername').value.trim();
+  const pwd=document.getElementById('newUserPwd').value;
+  const role=document.getElementById('newUserRole').value;
+  if(!name||!username||!pwd){showToast('تمام فیلدها را پر کنید','warning');return;}
+  const users=loadUsers();
+  if(users.find(u=>u.username===username)){showToast('نام کاربری قبلاً وجود دارد','danger');return;}
+  if(pwd.length<6){showToast('رمز باید حداقل ۶ کاراکتر باشد','warning');return;}
+  const newUser={id:Date.now(),name,username,pwdHash:hashPwd(pwd),role,active:true,createdAt:new Date().toISOString()};
+  users.push(newUser);
+  saveUsers(users);
+  ensureUserInv(newUser.id);
+  document.getElementById('newUserName').value='';
+  document.getElementById('newUserUsername').value='';
+  document.getElementById('newUserPwd').value='';
+  renderUsersList();populateWarehouseSelects();populateTransferSelects();
+  addLog('افزودن کاربر',`کاربر "${name}" (@${username}) با نقش ${role==='admin'?'مدیر کل':'اپراتور'} اضافه شد`);
+  showToast(`✅ کاربر ${name} افزوده شد`,'success');
+  saveState();
+  // Show export reminder
+  remindExport();
+}
+
+function deleteUser(id){
+  if(id===currentUser.id){showToast('نمی‌توانید حساب خودتان را حذف کنید','danger');return;}
+  if(!confirm('حذف این کاربر و تمام موجودی او؟'))return;
+  const filtered=loadUsers().filter(u=>u.id!==id);
+  // Remove from ALL localStorage keys so user is fully deleted everywhere
+  ALL_USER_KEYS.forEach(key=>{
+    const raw=localStorage.getItem(key);
+    if(!raw)return;
+    try{
+      const users=JSON.parse(raw).filter(u=>u.id!==id);
+      localStorage.setItem(key,JSON.stringify(users));
+    }catch(e){}
+  });
+  delete state.userInventory[id];
+  renderUsersList();saveState();
+  showToast('کاربر حذف شد','warning');
+  remindExport();
+}
+
+function toggleUserActive(id){
+  if(id===currentUser.id){showToast('نمی‌توانید حساب فعلی خود را تغییر دهید','danger');return;}
+  const users=loadUsers();const u=users.find(u=>u.id===id);
+  if(u){u.active=!u.active;saveUsers(users);renderUsersList();showToast(u.active?'کاربر فعال شد':'کاربر غیرفعال شد',u.active?'success':'warning');}
+}
+
+function openChangePwd(id){
+  document.getElementById('changePwdUserId').value=id;document.getElementById('changePwdNew').value='';
+  document.getElementById('changePwdModal').classList.add('open');
+}
+function saveChangePwd(){
+  const id=parseInt(document.getElementById('changePwdUserId').value);
+  const pwd=document.getElementById('changePwdNew').value;
+  if(pwd.length<6){showToast('رمز باید حداقل ۶ کاراکتر باشد','warning');return;}
+  const users=loadUsers();const u=users.find(u=>u.id===id);
+  if(u){u.pwdHash=hashPwd(pwd);saveUsers(users);}
+  closeModal('changePwdModal');showToast('رمز عبور تغییر کرد','success');
+  addLog('تغییر رمز',`رمز کاربر "${u?.name}" توسط ${currentUser.name} تغییر کرد`);
+}
+
+function renderUsersList(){
+  const users=loadUsers();
+  document.getElementById('userCount').textContent=`${users.length} کاربر`;
+  document.getElementById('usersListContainer').innerHTML=users.map(u=>{
+    ensureUserInv(u.id);
+    const totalInv=Object.values(state.userInventory[u.id]||{}).reduce((a,v)=>a+v,0);
+    return `<div class="user-card">
+      <div class="user-card-avatar" style="background:linear-gradient(135deg,${u.role==='admin'?'#4f6ef7,#7c3aed':'#10b981,#059669'});">${u.name.charAt(0)}</div>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:700;">${u.name} ${u.id===currentUser.id?'<span class="badge-custom badge-primary" style="font-size:9px;">شما</span>':''}</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:4px;">
+          <span style="font-size:11px;color:var(--text-muted);">@${u.username}</span>
+          <span class="badge-custom ${u.role==='admin'?'badge-primary':'badge-success'}" style="font-size:9px;">${u.role==='admin'?'🛡 مدیر':'👤 اپراتور'}</span>
+          <span class="badge-custom ${u.active?'badge-success':'badge-danger'}" style="font-size:9px;">${u.active?'✅ فعال':'🚫 غیرفعال'}</span>
+          <span class="badge-custom badge-cyan" style="font-size:9px;"><i class="fas fa-boxes" style="font-size:8px;"></i> موجودی: ${totalInv}</span>
+        </div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:3px;"><i class="fas fa-calendar-alt" style="font-size:8px;"></i> ${u.createdAt?new Date(u.createdAt).toLocaleDateString('fa-AF'):'-'}</div>
+      </div>
+      <div class="user-card-actions">
+        <button class="btn-outline-custom" onclick="openViewUserInv(${u.id})" style="font-size:11px;padding:4px 8px;color:var(--accent);border-color:var(--accent);" title="موجودی"><i class="fas fa-boxes"></i></button>
+        <button class="btn-outline-custom" onclick="openChangePwd(${u.id})" style="font-size:11px;padding:4px 8px;color:var(--warning);border-color:var(--warning);" title="تغییر رمز"><i class="fas fa-key"></i></button>
+        <button class="btn-outline-custom" onclick="toggleUserActive(${u.id})" style="font-size:11px;padding:4px 8px;color:${u.active?'#f59e0b':'#10b981'};border-color:${u.active?'#f59e0b':'#10b981'};"><i class="fas fa-${u.active?'ban':'check'}"></i></button>
+        <button class="btn-outline-custom" onclick="deleteUser(${u.id})" style="font-size:11px;padding:4px 8px;color:#ef4444;border-color:#ef4444;"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// PROFILE
+// ══════════════════════════════════════════════════════
+function renderProfile(){
+  ensureUserInv(currentUser.id);
+  const totalInv=Object.values(state.userInventory[currentUser.id]).reduce((a,v)=>a+v,0);
+  document.getElementById('profileInfo').innerHTML=`
+    <div style="display:flex;align-items:center;gap:14px;padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:14px;">
+      <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;">${currentUser.name.charAt(0)}</div>
+      <div>
+        <div style="font-size:15px;font-weight:700;">${currentUser.name}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">@${currentUser.username}</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:12px;">
+      <span class="badge-custom ${currentUser.role==='admin'?'badge-primary':'badge-success'}">${currentUser.role==='admin'?'🛡 مدیر کل':'👤 اپراتور'}</span>
+      <span class="badge-custom badge-cyan"><i class="fas fa-boxes" style="font-size:9px;"></i> موجودی کل: ${totalInv} عدد</span>
+    </div>`;
+  document.getElementById('profileOldPwd').value='';
+  document.getElementById('profileNewPwd').value='';
+  document.getElementById('profileNewPwd2').value='';
+}
+
+function changeOwnPassword(){
+  const oldPwd=document.getElementById('profileOldPwd').value;
+  const newPwd=document.getElementById('profileNewPwd').value;
+  const newPwd2=document.getElementById('profileNewPwd2').value;
+  if(!oldPwd||!newPwd||!newPwd2){showToast('تمام فیلدها را پر کنید','warning');return;}
+  if(hashPwd(oldPwd)!==currentUser.pwdHash){showToast('رمز فعلی اشتباه است','danger');return;}
+  if(newPwd.length<6){showToast('رمز جدید باید حداقل ۶ کاراکتر باشد','warning');return;}
+  if(newPwd!==newPwd2){showToast('تکرار رمز مطابقت ندارد','danger');return;}
+  const users=loadUsers();const u=users.find(u=>u.id===currentUser.id);
+  if(u){u.pwdHash=hashPwd(newPwd);saveUsers(users);currentUser.pwdHash=hashPwd(newPwd);}
+  document.getElementById('profileOldPwd').value='';document.getElementById('profileNewPwd').value='';document.getElementById('profileNewPwd2').value='';
+  showToast('رمز عبور با موفقیت تغییر کرد','success');
+  addLog('تغییر رمز',`کاربر "${currentUser.name}" رمز خود را تغییر داد`);
+}
+
+// ══════════════════════════════════════════════════════
+// AUTO-EMBED USERS IN HTML — هر بار کاربر اضافه شود
+// یک نسخه HTML جدید با کاربران جدید ساخته می‌شود
+// ══════════════════════════════════════════════════════
+function buildHtmlWithUsers(users){
+  const html=document.documentElement.outerHTML;
+  return html.replace(
+    /const EMBEDDED_USERS = \[.*?\]; \/\* __EMBEDDED_USERS_PLACEHOLDER__ \*\//s,
+    `const EMBEDDED_USERS = ${JSON.stringify(users)}; /* __EMBEDDED_USERS_PLACEHOLDER__ */`
+  );
+}
+
+// صدور فایل HTML با کاربران داخل آن
+function exportHtmlWithUsers(){
+  const users=loadUsers();
+  const updated=buildHtmlWithUsers(users);
+  const blob=new Blob([updated],{type:'text/html;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`isp-manager-${today()}.html`;
+  a.click();
+  showToast(`✅ فایل با ${users.length} کاربر آماده شد — روی Netlify آپلود کنید`,'success');
+  addLog('صدور فایل',`فایل HTML با ${users.length} کاربر توسط ${currentUser.name} صادر شد`);
+}
+
+// نمایش پیام یادآوری برای export
+function remindExport(){
+  const banner=document.getElementById('exportReminderBanner');
+  if(banner) banner.style.display='flex';
+}
+function dismissExportReminder(){
+  const banner=document.getElementById('exportReminderBanner');
+  if(banner) banner.style.display='none';
+}
+
+function downloadBackup(){
+  const data={state,settings:appSettings,users:loadUsers(),exportedAt:new Date().toISOString(),exportedBy:currentUser.name,version:'4.0'};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`isp-backup-${today()}.json`;a.click();
+  showToast('پشتیبان دانلود شد','success');
+  addLog('پشتیبان‌گیری',`پشتیبان توسط ${currentUser.name} دانلود شد`);
+}
+
+function restoreBackup(input){
+  const file=input.files[0];if(!file)return;
+  if(!confirm('این عمل تمام داده‌های فعلی را بازنویسی می‌کند. ادامه؟'))return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data.state)throw new Error('نامعتبر');
+      state=data.state;
+      if(data.settings)appSettings=data.settings;
+      if(data.users)saveUsers(data.users);
+      saveState();localStorage.setItem(SETTINGS_KEY,JSON.stringify(appSettings));
+      showToast('داده‌ها بازگردانی شد','success');renderSettings();refreshDashboard();
+    }catch(err){showToast('فایل پشتیبان نامعتبر است','danger');}
+  };reader.readAsText(file);input.value='';
+}
+
+function restoreBackup(input){
+  const file=input.files[0];if(!file)return;
+  if(!confirm('این عمل تمام داده‌های فعلی را بازنویسی می‌کند. ادامه؟'))return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!data.state)throw new Error('نامعتبر');
+      state=data.state;
+      if(data.settings)appSettings=data.settings;
+      if(data.users)saveUsers(data.users);
+      saveState();localStorage.setItem(SETTINGS_KEY,JSON.stringify(appSettings));
+      showToast('داده‌ها بازگردانی شد','success');renderSettings();refreshDashboard();
+    }catch(err){showToast('فایل پشتیبان نامعتبر است','danger');}
+  };reader.readAsText(file);input.value='';
+}
+
+// ══════════════════════════════════════════════════════
+// THEME & DATE
+// ══════════════════════════════════════════════════════
+function applyTheme(t){
+  if(t==='light'){document.body.classList.add('light-theme');document.getElementById('themeBtn').innerHTML='<i class="fas fa-sun"></i>';}
+  else{document.body.classList.remove('light-theme');document.getElementById('themeBtn').innerHTML='<i class="fas fa-moon"></i>';}
+  localStorage.setItem('isp_theme',t);
+}
+function toggleTheme(){applyTheme(document.body.classList.contains('light-theme')?'dark':'light');}
+
+function updateDateDisplay(){
+  const el=document.getElementById('dateDisplay');
+  if(el)el.textContent=new Date().toLocaleDateString('fa-AF',{year:'numeric',month:'long',day:'numeric'});
+  ['saleDate','returnDate'].forEach(id=>{const el=document.getElementById(id);if(el&&!el.value)el.value=today();});
+  const std=document.getElementById('smartTableDate');if(std&&!std.value)std.value=today();
+}
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+function init(){
+  loadState();loadSettings();updateDateDisplay();
+  populatePkgSelects();populateWarehouseSelects();populateTransferSelects();
+  renderPackagesTable();refreshDashboard();renderLogs();
+  document.getElementById('sidebarCompany').textContent=appSettings.company;
+  setInterval(updateDateDisplay,60000);
+}
+
+// BOOT
+(function boot(){
+  if(checkSession())startApp();
+})();
+</script>
+</body>
+</html>
