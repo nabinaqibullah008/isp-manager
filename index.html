@@ -1,10 +1,12 @@
-<html lang="fa" dir="rtl"><head>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ISP Manager v4 — سیستم مدیریت</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script><link type="text/css" rel="stylesheet" id="dark-mode-custom-link"><link type="text/css" rel="stylesheet" id="dark-mode-general-link"><style lang="en" type="text/css" id="dark-mode-custom-style"></style><style lang="en" type="text/css" id="dark-mode-native-style"></style><style lang="en" type="text/css" id="dark-mode-native-sheet"></style><link type="text/css" rel="stylesheet" id="dark-mode-custom-link"><link type="text/css" rel="stylesheet" id="dark-mode-general-link"><style lang="en" type="text/css" id="dark-mode-custom-style"></style><style lang="en" type="text/css" id="dark-mode-native-style"></style><style lang="en" type="text/css" id="dark-mode-native-sheet"></style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap');
 :root{
@@ -276,18 +278,18 @@ body.light-theme .inv-pkg-card{background:rgba(0,0,0,.03);}
 body.light-theme .mobile-bottom-nav{background:rgba(255,255,255,.97);}
 @media print{.sidebar,.topbar,.mobile-toggle,.sidebar-overlay,.toast-container,.mobile-bottom-nav{display:none!important;}.main-content{margin-right:0!important;padding-bottom:0!important;}}
 </style>
-<link type="text/css" rel="stylesheet" id="dark-mode-custom-link"><link type="text/css" rel="stylesheet" id="dark-mode-general-link"><style lang="en" type="text/css" id="dark-mode-custom-style"></style><style lang="en" type="text/css" id="dark-mode-native-style"></style><style lang="en" type="text/css" id="dark-mode-native-sheet"></style></head>
+</head>
 <body>
 
 <!-- ═══════════════════ LOGIN ═══════════════════ -->
-<div id="loginPage" style="display: none;">
+<div id="loginPage">
   <div class="login-box">
     <div class="login-logo">
       <div class="icon"><i class="fas fa-wifi"></i></div>
       <h1>ISP Manager</h1>
       <p>سیستم مدیریت موجودی و فروش</p>
     </div>
-    <div class="login-error" id="loginError" style="display: none;"><i class="fas fa-exclamation-circle"></i> <span id="loginErrMsg">نام کاربری یا رمز عبور اشتباه است</span></div>
+    <div class="login-error" id="loginError"><i class="fas fa-exclamation-circle"></i> <span id="loginErrMsg">نام کاربری یا رمز عبور اشتباه است</span></div>
     <div class="login-field">
       <label>نام کاربری</label>
       <input type="text" class="login-input" id="loginUsername" placeholder="نام کاربری را وارد کنید" autocomplete="off">
@@ -304,10 +306,10 @@ body.light-theme .mobile-bottom-nav{background:rgba(255,255,255,.97);}
 </div>
 
 <!-- ═══════════════════ APP ═══════════════════ -->
-<div id="appPage" style="display: block;">
+<div id="appPage" style="display:none;">
 
 <!-- EXPORT REMINDER BANNER -->
-<div id="exportReminderBanner" style="display: flex; position: fixed; top: 0px; left: 0px; right: 0px; z-index: 2000; background: linear-gradient(135deg, rgb(79, 110, 247), rgb(124, 58, 237)); padding: 10px 16px; align-items: center; gap: 10px; justify-content: space-between; box-shadow: rgba(79, 110, 247, 0.5) 0px 4px 20px;">
+<div id="exportReminderBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:2000;background:linear-gradient(135deg,#4f6ef7,#7c3aed);padding:10px 16px;align-items:center;gap:10px;justify-content:space-between;box-shadow:0 4px 20px rgba(79,110,247,.5);">
   <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:white;flex:1;min-width:0;">
     <i class="fas fa-info-circle" style="font-size:15px;flex-shrink:0;"></i>
     <span style="line-height:1.4;">کاربر جدید اضافه شد! برای کار روی <strong>همه دستگاه‌ها</strong> فایل را دانلود و روی Netlify آپلود کنید.</span>
@@ -334,12 +336,12 @@ body.light-theme .mobile-bottom-nav{background:rgba(255,255,255,.97);}
   </div>
   <nav class="sidebar-nav">
     <div class="nav-lbl">اصلی</div>
-    <div class="nav-item" onclick="showPage('dashboard')"><span class="nav-icon"><i class="fas fa-chart-pie"></i></span> داشبورد</div>
+    <div class="nav-item active" onclick="showPage('dashboard')"><span class="nav-icon"><i class="fas fa-chart-pie"></i></span> داشبورد</div>
 
     <div class="nav-lbl">انبار</div>
-    <div class="nav-item admin-only" onclick="showPage('warehouse')" style="display: flex;"><span class="nav-icon"><i class="fas fa-warehouse"></i></span> مدیریت انبار</div>
+    <div class="nav-item admin-only" onclick="showPage('warehouse')"><span class="nav-icon"><i class="fas fa-warehouse"></i></span> مدیریت انبار</div>
     <div class="nav-item" onclick="showPage('my_inventory')"><span class="nav-icon"><i class="fas fa-boxes"></i></span> موجودی من</div>
-    <div class="nav-item admin-only" onclick="showPage('inv_transfer')" style="display: flex;"><span class="nav-icon"><i class="fas fa-people-arrows"></i></span> انتقال بین کاربران</div>
+    <div class="nav-item admin-only" onclick="showPage('inv_transfer')"><span class="nav-icon"><i class="fas fa-people-arrows"></i></span> انتقال بین کاربران</div>
 
     <div class="nav-lbl">فروش</div>
     <div class="nav-item" onclick="showPage('sales')"><span class="nav-icon"><i class="fas fa-cash-register"></i></span> ثبت فروش</div>
@@ -347,13 +349,13 @@ body.light-theme .mobile-bottom-nav{background:rgba(255,255,255,.97);}
 
     <div class="nav-lbl">گزارش‌ها</div>
     <div class="nav-item" onclick="showPage('reports')"><span class="nav-icon"><i class="fas fa-chart-bar"></i></span> گزارش فروش</div>
-    <div class="nav-item admin-only" onclick="showPage('inv_logs')" style="display: flex;"><span class="nav-icon"><i class="fas fa-history"></i></span> لاگ انبار <span class="nav-badge" id="invLogBadge">0</span></div>
-    <div class="nav-item admin-only" onclick="showPage('logs')" style="display: flex;"><span class="nav-icon"><i class="fas fa-stream"></i></span> لاگ سیستم</div>
+    <div class="nav-item admin-only" onclick="showPage('inv_logs')"><span class="nav-icon"><i class="fas fa-history"></i></span> لاگ انبار <span class="nav-badge" id="invLogBadge">0</span></div>
+    <div class="nav-item admin-only" onclick="showPage('logs')"><span class="nav-icon"><i class="fas fa-stream"></i></span> لاگ سیستم</div>
 
-    <div class="nav-lbl admin-only" style="display: flex;">مدیریت</div>
-    <div class="nav-item admin-only active" onclick="showPage('users')" style="display: flex;"><span class="nav-icon"><i class="fas fa-users-cog"></i></span> مدیریت کاربران</div>
-    <div class="nav-item admin-only" onclick="showPage('packages')" style="display: flex;"><span class="nav-icon"><i class="fas fa-box"></i></span> مدیریت بسته‌ها</div>
-    <div class="nav-item admin-only" onclick="showPage('settings')" style="display: flex;"><span class="nav-icon"><i class="fas fa-cog"></i></span> تنظیمات</div>
+    <div class="nav-lbl admin-only">مدیریت</div>
+    <div class="nav-item admin-only" onclick="showPage('users')"><span class="nav-icon"><i class="fas fa-users-cog"></i></span> مدیریت کاربران</div>
+    <div class="nav-item admin-only" onclick="showPage('packages')"><span class="nav-icon"><i class="fas fa-box"></i></span> مدیریت بسته‌ها</div>
+    <div class="nav-item admin-only" onclick="showPage('settings')"><span class="nav-icon"><i class="fas fa-cog"></i></span> تنظیمات</div>
 
     <div class="nav-lbl" style="margin-top:4px;"></div>
     <div class="nav-item" onclick="showPage('profile')"><span class="nav-icon"><i class="fas fa-user-circle"></i></span> پروفایل من</div>
@@ -363,8 +365,8 @@ body.light-theme .mobile-bottom-nav{background:rgba(255,255,255,.97);}
     <div class="user-info">
       <div class="user-avatar" id="sidebarAvatar">م</div>
       <div class="user-details">
-        <div class="uname" id="sidebarName">مدیر سیستم</div>
-        <div class="urole" id="sidebarRole"><i class="fas fa-shield-alt" style="color:var(--primary);font-size:9px;margin-left:4px;"></i>مدیر کل</div>
+        <div class="uname" id="sidebarName">—</div>
+        <div class="urole" id="sidebarRole">—</div>
       </div>
     </div>
   </div>
@@ -374,68 +376,33 @@ body.light-theme .mobile-bottom-nav{background:rgba(255,255,255,.97);}
 <div class="main-content">
   <div class="topbar">
     <div>
-      <div class="topbar-title" id="pageTitle">مدیریت کاربران</div>
-      <div class="topbar-subtitle" id="pageSubtitle">افزودن و کنترل کاربران</div>
+      <div class="topbar-title" id="pageTitle">داشبورد</div>
+      <div class="topbar-subtitle" id="pageSubtitle">نمای کلی سیستم</div>
     </div>
     <div class="topbar-actions">
       <div class="btn-icon" onclick="manualRefresh()"><i class="fas fa-sync-alt" id="refreshIcon"></i></div>
       <div class="btn-icon" onclick="toggleTheme()" id="themeBtn"><i class="fas fa-moon"></i></div>
       <!-- Export button always visible for admin -->
-      <div class="btn-icon admin-only" onclick="exportHtmlWithUsers()" title="دانلود فایل برای همه دستگاه‌ها" style="background: rgba(79, 110, 247, 0.15); border-color: rgba(79, 110, 247, 0.3); color: var(--primary); display: flex;"><i class="fas fa-download"></i></div>
-      <div class="btn-icon" id="dateDisplay" style="width:auto;padding:0 12px;font-size:11px;color:var(--text-muted);">۲۰ جوزا ۱۴۰۵</div>
+      <div class="btn-icon admin-only" onclick="exportHtmlWithUsers()" title="دانلود فایل برای همه دستگاه‌ها" style="background:rgba(79,110,247,.15);border-color:rgba(79,110,247,.3);color:var(--primary);"><i class="fas fa-download"></i></div>
+      <div class="btn-icon" id="dateDisplay" style="width:auto;padding:0 12px;font-size:11px;color:var(--text-muted);"></div>
     </div>
   </div>
 
   <!-- ════════ DASHBOARD ════════ -->
-  <div class="page-content" id="page-dashboard">
-    <div class="stat-grid" id="dashStats">
-    <div class="stat-card" style="--card-color:var(--primary);">
-      <div class="stat-icon" style="background:rgba(79,110,247,.15);color:var(--primary);"><i class="fas fa-shopping-cart"></i></div>
-      <div class="stat-value">0</div>
-      <div class="stat-label">فروش امروز</div>
-    </div>
-    <div class="stat-card" style="--card-color:var(--secondary);">
-      <div class="stat-icon" style="background:rgba(124,58,237,.15);color:var(--secondary);"><i class="fas fa-calendar-alt"></i></div>
-      <div class="stat-value">0</div>
-      <div class="stat-label">فروش ماه جاری</div>
-    </div>
-    <div class="stat-card" style="--card-color:var(--accent);">
-      <div class="stat-icon" style="background:rgba(6,182,212,.15);color:var(--accent);"><i class="fas fa-boxes"></i></div>
-      <div class="stat-value">0</div>
-      <div class="stat-label">موجودی انبار من</div>
-    </div>
-    <div class="stat-card" style="--card-color:var(--success);">
-      <div class="stat-icon" style="background:rgba(16,185,129,.15);color:var(--success);"><i class="fas fa-coins"></i></div>
-      <div class="stat-value">0</div>
-      <div class="stat-label">درآمد کل (؋)</div>
-    </div>
-    <div class="stat-card" style="--card-color:var(--warning);">
-      <div class="stat-icon" style="background:rgba(245,158,11,.15);color:var(--warning);"><i class="fas fa-star"></i></div>
-      <div class="stat-value">-</div>
-      <div class="stat-label">پرفروش‌ترین بسته</div>
-    </div>
-    <div class="stat-card" style="--card-color:var(--danger);">
-      <div class="stat-icon" style="background:rgba(239,68,68,.15);color:var(--danger);"><i class="fas fa-exclamation-triangle"></i></div>
-      <div class="stat-value">7</div>
-      <div class="stat-label">بسته‌های کم موجود</div>
-    </div>
-    <div class="stat-card" style="--card-color:#06b6d4;">
-      <div class="stat-icon" style="background:rgba(6,182,212,.15);color:#06b6d4;"><i class="fas fa-warehouse"></i></div>
-      <div class="stat-value">0</div>
-      <div class="stat-label">مجموع موجودی همه کاربران</div>
-    </div></div>
+  <div class="page-content active" id="page-dashboard">
+    <div class="stat-grid" id="dashStats"></div>
     <div class="charts-grid">
       <div class="glass-card">
         <div class="card-header-custom">
           <div class="title"><div class="icon" style="background:rgba(79,110,247,.15);color:var(--primary);"><i class="fas fa-chart-line"></i></div>فروش ۷ روز اخیر</div>
         </div>
-        <div class="card-body-custom"><canvas id="dailySalesChart" height="171" style="display: block; box-sizing: border-box; height: 171px; width: 641px;" width="641"></canvas></div>
+        <div class="card-body-custom"><canvas id="dailySalesChart" height="80"></canvas></div>
       </div>
       <div class="glass-card">
         <div class="card-header-custom">
           <div class="title"><div class="icon" style="background:rgba(124,58,237,.15);color:var(--secondary);"><i class="fas fa-chart-pie"></i></div>توزیع بسته‌ها</div>
         </div>
-        <div class="card-body-custom"><canvas id="packagePieChart" height="301" width="301" style="display: block; box-sizing: border-box; height: 301px; width: 301px;"></canvas></div>
+        <div class="card-body-custom"><canvas id="packagePieChart" height="130"></canvas></div>
       </div>
     </div>
     <div class="glass-card">
@@ -449,49 +416,7 @@ body.light-theme .mobile-bottom-nav{background:rgba(255,255,255,.97);}
       <div style="overflow-x:auto;">
         <table class="data-table">
           <thead><tr><th>بسته</th><th>موجودی من</th><th>فروش امروز</th><th>فروش ماه</th><th>وضعیت</th></tr></thead>
-          <tbody id="smartTableBody"><tr>
-      <td><span class="badge-custom badge-primary"><i class="fas fa-wifi" style="font-size:9px;"></i> 1GB</span></td>
-      <td><strong style="color:#f87171;">0</strong></td>
-      <td>-</td>
-      <td>-</td>
-      <td><span class="badge-custom badge-danger">ناموجود</span></td>
-    </tr><tr>
-      <td><span class="badge-custom badge-primary"><i class="fas fa-wifi" style="font-size:9px;"></i> 2GB</span></td>
-      <td><strong style="color:#f87171;">0</strong></td>
-      <td>-</td>
-      <td>-</td>
-      <td><span class="badge-custom badge-danger">ناموجود</span></td>
-    </tr><tr>
-      <td><span class="badge-custom badge-primary"><i class="fas fa-wifi" style="font-size:9px;"></i> 3GB</span></td>
-      <td><strong style="color:#f87171;">0</strong></td>
-      <td>-</td>
-      <td>-</td>
-      <td><span class="badge-custom badge-danger">ناموجود</span></td>
-    </tr><tr>
-      <td><span class="badge-custom badge-primary"><i class="fas fa-wifi" style="font-size:9px;"></i> 5GB</span></td>
-      <td><strong style="color:#f87171;">0</strong></td>
-      <td>-</td>
-      <td>-</td>
-      <td><span class="badge-custom badge-danger">ناموجود</span></td>
-    </tr><tr>
-      <td><span class="badge-custom badge-primary"><i class="fas fa-wifi" style="font-size:9px;"></i> 10GB</span></td>
-      <td><strong style="color:#f87171;">0</strong></td>
-      <td>-</td>
-      <td>-</td>
-      <td><span class="badge-custom badge-danger">ناموجود</span></td>
-    </tr><tr>
-      <td><span class="badge-custom badge-primary"><i class="fas fa-wifi" style="font-size:9px;"></i> 15GB</span></td>
-      <td><strong style="color:#f87171;">0</strong></td>
-      <td>-</td>
-      <td>-</td>
-      <td><span class="badge-custom badge-danger">ناموجود</span></td>
-    </tr><tr>
-      <td><span class="badge-custom badge-primary"><i class="fas fa-wifi" style="font-size:9px;"></i> 20GB</span></td>
-      <td><strong style="color:#f87171;">0</strong></td>
-      <td>-</td>
-      <td>-</td>
-      <td><span class="badge-custom badge-danger">ناموجود</span></td>
-    </tr></tbody>
+          <tbody id="smartTableBody"></tbody>
         </table>
       </div>
     </div>
@@ -499,11 +424,7 @@ body.light-theme .mobile-bottom-nav{background:rgba(255,255,255,.97);}
       <div class="card-header-custom">
         <div class="title"><div class="icon" style="background:rgba(245,158,11,.15);color:var(--warning);"><i class="fas fa-bolt"></i></div>آخرین فعالیت‌ها</div>
       </div>
-      <div class="card-body-custom" id="recentActivity"><div class="activity-item">
-      <div class="activity-dot" style="background:#4f6ef7;"></div>
-      <div><div class="activity-text"><strong>افزودن کاربر</strong> — کاربر "امان الله سخی زاده" (@aman) با نقش اپراتور اضافه شد</div>
-      <div class="activity-time">۱۲:۰۵</div></div>
-    </div></div>
+      <div class="card-body-custom" id="recentActivity"></div>
     </div>
   </div>
 
@@ -516,8 +437,8 @@ body.light-theme .mobile-bottom-nav{background:rgba(255,255,255,.97);}
       </div>
       <div class="card-body-custom">
         <div style="display:grid;gap:14px;align-items:end;" class="form-grid-5">
-          <div><label class="form-label-custom">کاربر</label><select class="form-control-custom" id="whUser"><option value="1">مدیر سیستم (@admin)</option><option value="1781076957238">امان الله سخی زاده (@aman)</option></select></div>
-          <div><label class="form-label-custom">بسته</label><select class="form-control-custom" id="whPkg"><option value="1">1GB</option><option value="2">2GB</option><option value="3">3GB</option><option value="4">5GB</option><option value="5">10GB</option><option value="6">15GB</option><option value="7">20GB</option></select></div>
+          <div><label class="form-label-custom">کاربر</label><select class="form-control-custom" id="whUser"></select></div>
+          <div><label class="form-label-custom">بسته</label><select class="form-control-custom" id="whPkg"></select></div>
           <div><label class="form-label-custom">عملیات</label><select class="form-control-custom" id="whOp"><option value="add">➕ افزودن</option><option value="remove">➖ کاهش</option></select></div>
           <div><label class="form-label-custom">تعداد</label><input class="form-control-custom" id="whQty" type="number" min="1" placeholder="تعداد" oninput="updateWhInfo()"></div>
           <div><button class="btn-success-custom" onclick="doWarehouseOp()"><i class="fas fa-check"></i> ثبت</button></div>
@@ -571,9 +492,9 @@ body.light-theme .mobile-bottom-nav{background:rgba(255,255,255,.97);}
       </div>
       <div class="card-body-custom">
         <div style="display:grid;gap:14px;margin-bottom:14px;" class="form-grid-4">
-          <div><label class="form-label-custom">از کاربر</label><select class="form-control-custom" id="trFrom" onchange="updateTrInfo()"><option value="1">مدیر سیستم (@admin)</option><option value="1781076957238">امان الله سخی زاده (@aman)</option></select></div>
-          <div><label class="form-label-custom">به کاربر</label><select class="form-control-custom" id="trTo" onchange="updateTrInfo()"><option value="1">مدیر سیستم (@admin)</option><option value="1781076957238">امان الله سخی زاده (@aman)</option></select></div>
-          <div><label class="form-label-custom">بسته</label><select class="form-control-custom" id="trPkg" onchange="updateTrInfo()"><option value="1">1GB</option><option value="2">2GB</option><option value="3">3GB</option><option value="4">5GB</option><option value="5">10GB</option><option value="6">15GB</option><option value="7">20GB</option></select></div>
+          <div><label class="form-label-custom">از کاربر</label><select class="form-control-custom" id="trFrom" onchange="updateTrInfo()"></select></div>
+          <div><label class="form-label-custom">به کاربر</label><select class="form-control-custom" id="trTo" onchange="updateTrInfo()"></select></div>
+          <div><label class="form-label-custom">بسته</label><select class="form-control-custom" id="trPkg" onchange="updateTrInfo()"></select></div>
           <div><label class="form-label-custom">تعداد</label><input class="form-control-custom" id="trQty" type="number" min="1" placeholder="تعداد" oninput="updateTrInfo()"></div>
         </div>
         <div style="margin-bottom:14px;"><label class="form-label-custom">توضیحات</label><input class="form-control-custom" id="trNote" placeholder="دلیل انتقال"></div>
@@ -598,7 +519,7 @@ body.light-theme .mobile-bottom-nav{background:rgba(255,255,255,.97);}
       <div class="card-header-custom"><div class="title"><div class="icon" style="background:rgba(16,185,129,.15);color:var(--success);"><i class="fas fa-cash-register"></i></div>ثبت فروش جدید</div></div>
       <div class="card-body-custom">
         <div style="display:grid;gap:16px;" class="form-grid-3">
-          <div><label class="form-label-custom">نوع بسته</label><select class="form-control-custom" id="salePackage" onchange="updateSaleInfo()"><option value="1">1GB</option><option value="2">2GB</option><option value="3">3GB</option><option value="4">5GB</option><option value="5">10GB</option><option value="6">15GB</option><option value="7">20GB</option></select></div>
+          <div><label class="form-label-custom">نوع بسته</label><select class="form-control-custom" id="salePackage" onchange="updateSaleInfo()"></select></div>
           <div><label class="form-label-custom">تعداد</label><input class="form-control-custom" id="saleQty" type="number" min="1" placeholder="تعداد" oninput="updateSaleInfo()"></div>
           <div><label class="form-label-custom">تاریخ</label><input class="form-control-custom" id="saleDate" type="date"></div>
           <div><label class="form-label-custom">نام فروشنده</label><input class="form-control-custom" id="saleSeller" placeholder="نام فروشنده"></div>
@@ -620,7 +541,7 @@ body.light-theme .mobile-bottom-nav{background:rgba(255,255,255,.97);}
       </div>
       <div style="overflow-x:auto;">
         <table class="data-table">
-          <thead><tr><th>تاریخ</th><th>بسته</th><th>تعداد</th><th>مبلغ</th><th>فروشنده</th><th>توضیحات</th><th class="admin-only" style="display: flex;">عملیات</th></tr></thead>
+          <thead><tr><th>تاریخ</th><th>بسته</th><th>تعداد</th><th>مبلغ</th><th>فروشنده</th><th>توضیحات</th><th class="admin-only">عملیات</th></tr></thead>
           <tbody id="salesHistoryBody"></tbody>
         </table>
       </div>
@@ -633,7 +554,7 @@ body.light-theme .mobile-bottom-nav{background:rgba(255,255,255,.97);}
       <div class="card-header-custom"><div class="title"><div class="icon" style="background:rgba(245,158,11,.15);color:var(--warning);"><i class="fas fa-undo"></i></div>برگشت بسته به انبار خودم</div></div>
       <div class="card-body-custom">
         <div style="display:grid;gap:16px;" class="form-grid-3">
-          <div><label class="form-label-custom">نوع بسته</label><select class="form-control-custom" id="returnPackage" onchange="updateReturnInfo()"><option value="1">1GB</option><option value="2">2GB</option><option value="3">3GB</option><option value="4">5GB</option><option value="5">10GB</option><option value="6">15GB</option><option value="7">20GB</option></select></div>
+          <div><label class="form-label-custom">نوع بسته</label><select class="form-control-custom" id="returnPackage" onchange="updateReturnInfo()"></select></div>
           <div><label class="form-label-custom">تعداد برگشتی</label><input class="form-control-custom" id="returnQty" type="number" min="1" placeholder="تعداد" oninput="updateReturnInfo()"></div>
           <div><label class="form-label-custom">تاریخ</label><input class="form-control-custom" id="returnDate" type="date"></div>
           <div style="grid-column:1/-1;"><label class="form-label-custom">دلیل برگشت</label><input class="form-control-custom" id="returnNote" placeholder="دلیل"></div>
@@ -714,14 +635,14 @@ body.light-theme .mobile-bottom-nav{background:rgba(255,255,255,.97);}
       <div style="overflow-x:auto;">
         <table class="data-table">
           <thead><tr><th>زمان</th><th>کاربر</th><th>عملیات</th><th>جزئیات</th></tr></thead>
-          <tbody id="logsTableBody"><tr><td colspan="4" style="text-align:center;color:var(--text-muted);">لاگی ثبت نشده</td></tr></tbody>
+          <tbody id="logsTableBody"></tbody>
         </table>
       </div>
     </div>
   </div>
 
   <!-- ════════ USERS (admin) ════════ -->
-  <div class="page-content active" id="page-users">
+  <div class="page-content" id="page-users">
     <div class="glass-card">
       <div class="card-header-custom"><div class="title"><div class="icon" style="background:rgba(79,110,247,.15);color:var(--primary);"><i class="fas fa-user-plus"></i></div>افزودن کاربر جدید</div></div>
       <div class="card-body-custom">
@@ -732,7 +653,7 @@ body.light-theme .mobile-bottom-nav{background:rgba(255,255,255,.97);}
           <div><label class="form-label-custom">نقش</label>
             <select class="form-control-custom" id="newUserRole">
               <option value="admin">🛡 مدیر کل</option>
-              <option value="operator" selected="">👤 اپراتور (فروشنده)</option>
+              <option value="operator" selected>👤 اپراتور (فروشنده)</option>
             </select>
           </div>
         </div>
@@ -743,45 +664,9 @@ body.light-theme .mobile-bottom-nav{background:rgba(255,255,255,.97);}
     <div class="glass-card">
       <div class="card-header-custom">
         <div class="title"><div class="icon" style="background:rgba(6,182,212,.15);color:var(--accent);"><i class="fas fa-users"></i></div>لیست کاربران</div>
-        <span id="userCount" style="font-size:11px;color:var(--text-muted);">2 کاربر</span>
+        <span id="userCount" style="font-size:11px;color:var(--text-muted);"></span>
       </div>
-      <div class="card-body-custom" id="usersListContainer"><div class="user-card">
-      <div class="user-card-avatar" style="background:linear-gradient(135deg,#4f6ef7,#7c3aed);">م</div>
-      <div style="flex:1;">
-        <div style="font-size:13px;font-weight:700;">مدیر سیستم <span class="badge-custom badge-primary" style="font-size:9px;">شما</span></div>
-        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:4px;">
-          <span style="font-size:11px;color:var(--text-muted);">@admin</span>
-          <span class="badge-custom badge-primary" style="font-size:9px;">🛡 مدیر</span>
-          <span class="badge-custom badge-success" style="font-size:9px;">✅ فعال</span>
-          <span class="badge-custom badge-cyan" style="font-size:9px;"><i class="fas fa-boxes" style="font-size:8px;"></i> موجودی: 0</span>
-        </div>
-        <div style="font-size:10px;color:var(--text-muted);margin-top:3px;"><i class="fas fa-calendar-alt" style="font-size:8px;"></i> ۱۴۰۵/۳/۲۰</div>
-      </div>
-      <div class="user-card-actions">
-        <button class="btn-outline-custom" onclick="openViewUserInv(1)" style="font-size:11px;padding:4px 8px;color:var(--accent);border-color:var(--accent);" title="موجودی"><i class="fas fa-boxes"></i></button>
-        <button class="btn-outline-custom" onclick="openChangePwd(1)" style="font-size:11px;padding:4px 8px;color:var(--warning);border-color:var(--warning);" title="تغییر رمز"><i class="fas fa-key"></i></button>
-        <button class="btn-outline-custom" onclick="toggleUserActive(1)" style="font-size:11px;padding:4px 8px;color:#f59e0b;border-color:#f59e0b;"><i class="fas fa-ban"></i></button>
-        <button class="btn-outline-custom" onclick="deleteUser(1)" style="font-size:11px;padding:4px 8px;color:#ef4444;border-color:#ef4444;"><i class="fas fa-trash"></i></button>
-      </div>
-    </div><div class="user-card">
-      <div class="user-card-avatar" style="background:linear-gradient(135deg,#10b981,#059669);">ا</div>
-      <div style="flex:1;">
-        <div style="font-size:13px;font-weight:700;">امان الله سخی زاده </div>
-        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:4px;">
-          <span style="font-size:11px;color:var(--text-muted);">@aman</span>
-          <span class="badge-custom badge-success" style="font-size:9px;">👤 اپراتور</span>
-          <span class="badge-custom badge-success" style="font-size:9px;">✅ فعال</span>
-          <span class="badge-custom badge-cyan" style="font-size:9px;"><i class="fas fa-boxes" style="font-size:8px;"></i> موجودی: 0</span>
-        </div>
-        <div style="font-size:10px;color:var(--text-muted);margin-top:3px;"><i class="fas fa-calendar-alt" style="font-size:8px;"></i> ۱۴۰۵/۳/۲۰</div>
-      </div>
-      <div class="user-card-actions">
-        <button class="btn-outline-custom" onclick="openViewUserInv(1781076957238)" style="font-size:11px;padding:4px 8px;color:var(--accent);border-color:var(--accent);" title="موجودی"><i class="fas fa-boxes"></i></button>
-        <button class="btn-outline-custom" onclick="openChangePwd(1781076957238)" style="font-size:11px;padding:4px 8px;color:var(--warning);border-color:var(--warning);" title="تغییر رمز"><i class="fas fa-key"></i></button>
-        <button class="btn-outline-custom" onclick="toggleUserActive(1781076957238)" style="font-size:11px;padding:4px 8px;color:#f59e0b;border-color:#f59e0b;"><i class="fas fa-ban"></i></button>
-        <button class="btn-outline-custom" onclick="deleteUser(1781076957238)" style="font-size:11px;padding:4px 8px;color:#ef4444;border-color:#ef4444;"><i class="fas fa-trash"></i></button>
-      </div>
-    </div></div>
+      <div class="card-body-custom" id="usersListContainer"></div>
     </div>
   </div>
 
@@ -803,49 +688,7 @@ body.light-theme .mobile-bottom-nav{background:rgba(255,255,255,.97);}
       <div style="overflow-x:auto;">
         <table class="data-table">
           <thead><tr><th>#</th><th>نام</th><th>حجم</th><th>قیمت</th><th>عملیات</th></tr></thead>
-          <tbody id="packagesTableBody">
-    <tr><td>1</td><td><span class="badge-custom badge-primary"><i class="fas fa-wifi"></i> 1GB</span></td>
-    <td>1GB</td><td>50 ؋</td>
-    <td style="display:flex;gap:5px;">
-      <button class="btn-outline-custom" onclick="openEditPackage(1)" style="font-size:11px;padding:4px 8px;color:var(--primary);border-color:var(--primary);"><i class="fas fa-edit"></i></button>
-      <button class="btn-outline-custom" onclick="deletePackage(1)" style="font-size:11px;padding:4px 8px;color:#ef4444;border-color:#ef4444;"><i class="fas fa-trash"></i></button>
-    </td></tr>
-    <tr><td>2</td><td><span class="badge-custom badge-primary"><i class="fas fa-wifi"></i> 2GB</span></td>
-    <td>2GB</td><td>80 ؋</td>
-    <td style="display:flex;gap:5px;">
-      <button class="btn-outline-custom" onclick="openEditPackage(2)" style="font-size:11px;padding:4px 8px;color:var(--primary);border-color:var(--primary);"><i class="fas fa-edit"></i></button>
-      <button class="btn-outline-custom" onclick="deletePackage(2)" style="font-size:11px;padding:4px 8px;color:#ef4444;border-color:#ef4444;"><i class="fas fa-trash"></i></button>
-    </td></tr>
-    <tr><td>3</td><td><span class="badge-custom badge-primary"><i class="fas fa-wifi"></i> 3GB</span></td>
-    <td>3GB</td><td>110 ؋</td>
-    <td style="display:flex;gap:5px;">
-      <button class="btn-outline-custom" onclick="openEditPackage(3)" style="font-size:11px;padding:4px 8px;color:var(--primary);border-color:var(--primary);"><i class="fas fa-edit"></i></button>
-      <button class="btn-outline-custom" onclick="deletePackage(3)" style="font-size:11px;padding:4px 8px;color:#ef4444;border-color:#ef4444;"><i class="fas fa-trash"></i></button>
-    </td></tr>
-    <tr><td>4</td><td><span class="badge-custom badge-primary"><i class="fas fa-wifi"></i> 5GB</span></td>
-    <td>5GB</td><td>150 ؋</td>
-    <td style="display:flex;gap:5px;">
-      <button class="btn-outline-custom" onclick="openEditPackage(4)" style="font-size:11px;padding:4px 8px;color:var(--primary);border-color:var(--primary);"><i class="fas fa-edit"></i></button>
-      <button class="btn-outline-custom" onclick="deletePackage(4)" style="font-size:11px;padding:4px 8px;color:#ef4444;border-color:#ef4444;"><i class="fas fa-trash"></i></button>
-    </td></tr>
-    <tr><td>5</td><td><span class="badge-custom badge-primary"><i class="fas fa-wifi"></i> 10GB</span></td>
-    <td>10GB</td><td>220 ؋</td>
-    <td style="display:flex;gap:5px;">
-      <button class="btn-outline-custom" onclick="openEditPackage(5)" style="font-size:11px;padding:4px 8px;color:var(--primary);border-color:var(--primary);"><i class="fas fa-edit"></i></button>
-      <button class="btn-outline-custom" onclick="deletePackage(5)" style="font-size:11px;padding:4px 8px;color:#ef4444;border-color:#ef4444;"><i class="fas fa-trash"></i></button>
-    </td></tr>
-    <tr><td>6</td><td><span class="badge-custom badge-primary"><i class="fas fa-wifi"></i> 15GB</span></td>
-    <td>15GB</td><td>300 ؋</td>
-    <td style="display:flex;gap:5px;">
-      <button class="btn-outline-custom" onclick="openEditPackage(6)" style="font-size:11px;padding:4px 8px;color:var(--primary);border-color:var(--primary);"><i class="fas fa-edit"></i></button>
-      <button class="btn-outline-custom" onclick="deletePackage(6)" style="font-size:11px;padding:4px 8px;color:#ef4444;border-color:#ef4444;"><i class="fas fa-trash"></i></button>
-    </td></tr>
-    <tr><td>7</td><td><span class="badge-custom badge-primary"><i class="fas fa-wifi"></i> 20GB</span></td>
-    <td>20GB</td><td>380 ؋</td>
-    <td style="display:flex;gap:5px;">
-      <button class="btn-outline-custom" onclick="openEditPackage(7)" style="font-size:11px;padding:4px 8px;color:var(--primary);border-color:var(--primary);"><i class="fas fa-edit"></i></button>
-      <button class="btn-outline-custom" onclick="deletePackage(7)" style="font-size:11px;padding:4px 8px;color:#ef4444;border-color:#ef4444;"><i class="fas fa-trash"></i></button>
-    </td></tr></tbody>
+          <tbody id="packagesTableBody"></tbody>
         </table>
       </div>
     </div>
@@ -1013,65 +856,82 @@ const ALL_SESSION_KEYS = ['isp_session_v1','isp_session_v4','isp_session_v3','is
 // EMBEDDED USERS — کاربران داخل فایل HTML ذخیره می‌شوند
 // با دکمه "صدور فایل با کاربران" این آرایه به‌روز می‌شود
 // ══════════════════════════════════════════════════════
-const EMBEDDED_USERS = [{"id":1,"name":"مدیر سیستم","username":"admin","pwdHash":"-tu28q3","role":"admin","active":true,"createdAt":"2026-06-10T07:35:19.451Z"},{"id":1781076957238,"name":"امان الله سخی زاده","username":"aman","pwdHash":"nzmv6r","role":"operator","active":true,"createdAt":"2026-06-10T07:35:57.238Z"},{"id":1781079563113,"name":"حشمت الله مخدوم","username":"hashmat","pwdHash":"qx9cdc","role":"operator","active":true,"createdAt":"2026-06-10T08:19:23.113Z"}]; /* __EMBEDDED_USERS_PLACEHOLDER__ */
+const EMBEDDED_USERS = []; /* __EMBEDDED_USERS_PLACEHOLDER__ */
 
 // ══════════════════════════════════════════════════════
 // AUTH
 // ══════════════════════════════════════════════════════
 function hashPwd(p){let h=0;for(let i=0;i<p.length;i++){h=((h<<5)-h)+p.charCodeAt(i);h|=0;}return h.toString(36);}
 
-function mergeUserLists(...arrays){
+function mergeUserLists(lsUsers, embeddedUsers){
+  // localStorage کاربران مهم‌تر هستند — embedded فقط برای دستگاه جدید
   const map={};
-  arrays.forEach(arr=>{
-    if(!Array.isArray(arr))return;
-    arr.forEach(u=>{
+  // اول embedded را اضافه کن
+  if(Array.isArray(embeddedUsers)){
+    embeddedUsers.forEach(u=>{
       if(!u||!u.username)return;
       if(!u.role)u.role='operator';
       if(u.active===undefined)u.active=true;
-      if(!map[u.username]){
-        map[u.username]=u;
-      } else {
-        const t0=map[u.username].createdAt?new Date(map[u.username].createdAt).getTime():0;
-        const t1=u.createdAt?new Date(u.createdAt).getTime():0;
-        if(t1>=t0)map[u.username]=u;
-      }
+      map[u.username]=u;
     });
-  });
+  }
+  // بعد localStorage — اینها اولویت بالاتر دارند
+  if(Array.isArray(lsUsers)){
+    lsUsers.forEach(u=>{
+      if(!u||!u.username)return;
+      if(!u.role)u.role='operator';
+      if(u.active===undefined)u.active=true;
+      map[u.username]=u; // همیشه localStorage را جایگزین کن
+    });
+  }
   return Object.values(map);
 }
 
 function loadUsers(){
-  const sources=[];
-  // 1. Karbaran embedded dar file HTML
-  if(Array.isArray(EMBEDDED_USERS)&&EMBEDDED_USERS.length>0) sources.push(EMBEDDED_USERS);
-  // 2. Tamam localStorage keys
+  // جمع کردن کاربران از localStorage
+  const lsMap={};
   ALL_USER_KEYS.forEach(key=>{
     const raw=localStorage.getItem(key);
     if(!raw)return;
-    try{sources.push(JSON.parse(raw));}catch(e){}
-  });
-  const users=mergeUserLists(...sources);
-  if(users.length===0){
-    const def=[{id:1,name:'مدیر سیستم',username:'admin',pwdHash:hashPwd('ISP@Admin2024'),role:'admin',active:true,createdAt:new Date().toISOString()}];
-    saveUsers(def);return def;
-  }
-  saveUsers(users);
-  return users;
-}
-function saveUsers(u){
-  // Save to primary key
-  localStorage.setItem(USERS_KEY,JSON.stringify(u));
-  // Also update other keys so they stay in sync (prevents deleted users from reappearing)
-  const ids=new Set(u.map(x=>x.id));
-  ALL_USER_KEYS.slice(1).forEach(key=>{
-    const raw=localStorage.getItem(key);
-    if(!raw)return;
     try{
-      const old=JSON.parse(raw).filter(x=>ids.has(x.id));
-      if(old.length>0) localStorage.setItem(key,JSON.stringify(old));
-      else localStorage.removeItem(key);
+      JSON.parse(raw).forEach(u=>{
+        if(!u||!u.username)return;
+        if(!lsMap[u.username]){
+          lsMap[u.username]=u;
+        } else {
+          // جدیدتر را انتخاب کن
+          const t0=lsMap[u.username].createdAt?new Date(lsMap[u.username].createdAt).getTime():0;
+          const t1=u.createdAt?new Date(u.createdAt).getTime():0;
+          if(t1>t0)lsMap[u.username]=u;
+        }
+      });
     }catch(e){}
   });
+  const lsUsers=Object.values(lsMap);
+  
+  // اگر localStorage کاربر دارد — از localStorage استفاده کن
+  if(lsUsers.length>0){
+    // embedded را هم merge کن (کاربران جدید که در LS نیستند)
+    const merged=mergeUserLists(lsUsers, EMBEDDED_USERS);
+    saveUsers(merged);
+    return merged;
+  }
+  
+  // localStorage خالی است — از embedded استفاده کن (دستگاه جدید)
+  if(Array.isArray(EMBEDDED_USERS)&&EMBEDDED_USERS.length>0){
+    saveUsers(EMBEDDED_USERS);
+    return EMBEDDED_USERS;
+  }
+  
+  // هیچ کاربری نیست — ادمین پیش‌فرض
+  const def=[{id:1,name:'مدیر سیستم',username:'admin',pwdHash:hashPwd('ISP@Admin2024'),role:'admin',active:true,createdAt:new Date().toISOString()}];
+  saveUsers(def);return def;
+}
+function saveUsers(u){
+  // فقط در کلید اصلی ذخیره کن
+  localStorage.setItem(USERS_KEY,JSON.stringify(u));
+  // کلیدهای قدیمی را پاک کن تا تداخل نباشد
+  ['isp_users_v4','isp_users_v3','isp_users_v2'].forEach(key=>localStorage.removeItem(key));
 }
 
 let currentUser=null;
@@ -1133,7 +993,13 @@ function startApp(){
   document.getElementById('sidebarName').textContent=currentUser.name;
   document.getElementById('sidebarRole').innerHTML=`<i class="fas fa-${currentUser.role==='admin'?'shield-alt':'user'}" style="color:var(--primary);font-size:9px;margin-left:4px;"></i>${currentUser.role==='admin'?'مدیر کل':'اپراتور'}`;
   document.getElementById('sidebarAvatar').textContent=currentUser.name.charAt(0);
-  document.querySelectorAll('.admin-only').forEach(el=>{el.style.display=currentUser.role==='admin'?'flex':'none';});
+  document.querySelectorAll('.admin-only').forEach(el=>{
+    if(el.tagName==='TH'||el.tagName==='TD'){
+      el.style.display=currentUser.role==='admin'?'table-cell':'none';
+    } else {
+      el.style.display=currentUser.role==='admin'?'flex':'none';
+    }
+  });
   document.getElementById('saleSeller').value=currentUser.name;
   if(localStorage.getItem('isp_theme')==='light')applyTheme('light');
   init();
@@ -2068,18 +1934,11 @@ function addUser(){
 function deleteUser(id){
   if(id===currentUser.id){showToast('نمی‌توانید حساب خودتان را حذف کنید','danger');return;}
   if(!confirm('حذف این کاربر و تمام موجودی او؟'))return;
-  const filtered=loadUsers().filter(u=>u.id!==id);
-  // Remove from ALL localStorage keys so user is fully deleted everywhere
-  ALL_USER_KEYS.forEach(key=>{
-    const raw=localStorage.getItem(key);
-    if(!raw)return;
-    try{
-      const users=JSON.parse(raw).filter(u=>u.id!==id);
-      localStorage.setItem(key,JSON.stringify(users));
-    }catch(e){}
-  });
+  const users=loadUsers().filter(u=>u.id!==id);
+  saveUsers(users);
   delete state.userInventory[id];
-  renderUsersList();saveState();
+  saveState();
+  renderUsersList();
   showToast('کاربر حذف شد','warning');
   remindExport();
 }
@@ -2182,8 +2041,12 @@ function buildHtmlWithUsers(users){
   );
 }
 
-// صدور فایل HTML با کاربران داخل آن
+// صدور فایل HTML — فقط ادمین
 function exportHtmlWithUsers(){
+  if(!currentUser||currentUser.role!=='admin'){
+    showToast('فقط ادمین می‌تواند فایل صادر کند','danger');
+    return;
+  }
   const users=loadUsers();
   const updated=buildHtmlWithUsers(users);
   const blob=new Blob([updated],{type:'text/html;charset=utf-8'});
@@ -2191,7 +2054,7 @@ function exportHtmlWithUsers(){
   a.href=URL.createObjectURL(blob);
   a.download=`isp-manager-${today()}.html`;
   a.click();
-  showToast(`✅ فایل با ${users.length} کاربر آماده شد — روی Netlify آپلود کنید`,'success');
+  showToast(`✅ فایل با ${users.length} کاربر آماده — روی GitHub آپلود کنید`,'success');
   addLog('صدور فایل',`فایل HTML با ${users.length} کاربر توسط ${currentUser.name} صادر شد`);
 }
 
@@ -2280,8 +2143,5 @@ function init(){
   if(checkSession())startApp();
 })();
 </script>
-
-
-
-
-</body></html>
+</body>
+</html>
